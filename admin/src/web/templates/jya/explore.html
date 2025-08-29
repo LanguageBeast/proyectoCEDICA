@@ -1,0 +1,243 @@
+{% extends "home.html" %}
+{% block title %}
+Explorar Registros de Cobro
+{% endblock title %}
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='style-modules.css') }}" />
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
+{% endblock head %}
+{% block content %}
+<div id="main-div">
+    <div class="row justify-content-center">
+        <div id="secondary-div-title" class="col my-4 pt-4 pb-4 border bg-body-tertiary text-center">
+            <h1 class="display-4 text-muted text-center">Explorar Legajos JyA</h1>
+            <p>Aquí podrá leer, editar, cargar documentacion y eliminar Legajos JyA.</p>
+        </div>
+    </div>
+    <div class="row">
+        <!-- BEGIN SEARCH RESULT -->
+        <form method="get">
+            <input type="hidden" name="reset" value="0">
+            {% block formhidden %}
+            <input type="hidden" name="orderDirection" value="{{ request.args.get('orderDirection', 'asc') }}">
+            <input type="hidden" name="orderBy" value="{{ request.args.get('orderBy', 'first_name') }}">
+            {% endblock formhidden %}
+            <div class="col-md-12">
+                <div class="grid search">
+                    <div class="grid-body">
+                        <div class="row">
+                            <!-- BEGIN FILTERS -->
+                            {% block filters %}
+                            <div class="col-md-3">
+                                <h2 class="grid-title">
+                                    <i class="fa fa-filter"></i> Buscar por:
+                                </h2>
+                                <hr />
+                                <!-- BEGIN GENERAL FILTERS -->
+                                <div class="input-group mb-3">
+                                    <h5 class="pe-2">Buscar</h5>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-primary" type="submit">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </span>
+                                </div>
+                                <label class="lead display-7">
+                                    Nombre
+                                    <input type="text" class="form-control" name="first_name"
+                                        value="{{ filters.get('first_name', '') }}" maxlength="25" />
+                                </label>
+                                <label class="lead display-7">
+                                    Apellido
+                                    <input type="text" class="form-control" name="last_name"
+                                        value="{{ filters.get('last_name', '') }}" maxlength="25" />
+                                </label>
+                                <label class="lead display-7">
+                                    DNI
+                                    <input type="text" class="form-control" name="dni"
+                                        value="{{ filters.get('dni', '') }}" maxlength="15" />
+                                </label>
+                                <label class="lead display-7">
+                                    Profesionales que lo atienden
+                                    <input type="text" class="form-control" name="attending_professionals"
+                                        value="{{ filters.get('attending_professionals', '') }}" maxlength="25" />
+                                </label>
+                                <div class="padding"></div>
+                            </div>
+                            <!-- END FILTERS -->
+                            {% endblock filters %}
+                            <!-- BEGIN RESULT -->
+                            <div class="col-md-9">
+                                <h2>
+                                    <i class="fa fa-file-o"></i> Resultados
+                                </h2>
+                                <hr />
+                                <!-- DROPDOWNS --->
+                                <div class="d-flex justify-content-evenly mb-3">
+                                    <div class="row w-50">
+                                        <div class="col-md-6 col-12 mb-2">
+                                            <div class="dropdown mx-auto w-100">
+                                                <button
+                                                    class="btn btn-secondary dropdown-toggle w-100 text-wrap text-center"
+                                                    type="button" id="orderDirectionDropdown" data-bs-toggle="dropdown"
+                                                    aria-expanded="false">
+                                                    <span>Ordenar dirección</span>
+                                                    <div>
+                                                        <small class="text-white">
+                                                            {% if request.args.get('orderDirection') == 'desc' %}
+                                                            Descendente
+                                                            {% else %}
+                                                            Ascendente
+                                                            {% endif %}
+                                                        </small>
+                                                    </div>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-dark"
+                                                    aria-labelledby="orderDirectionDropdown">
+                                                    {% block orderDirection %}
+                                                    <li>
+                                                        <a class="dropdown-item"
+                                                            href="{{ url_for('module_jya.explore', orderDirection='asc', **(filters if filters else {})) }}">Ascendente</a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item"
+                                                            href="{{ url_for('module_jya.explore', orderDirection='desc', **(filters if filters else {})) }}">Descendente</a>
+                                                    </li>
+                                                    {% endblock orderDirection %}
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 col-12">
+                                            <div class="dropdown mx-auto w-100">
+                                                <button
+                                                    class="btn btn-secondary dropdown-toggle w-100 text-wrap text-center"
+                                                    type="button" id="orderByDropdown" data-bs-toggle="dropdown"
+                                                    aria-expanded="false">
+                                                    Ordenar por
+                                                    <small class="d-block text-white">
+                                                        {{ request.args.get('orderBy', 'first_name') == 'last_name' and
+                                                        'Apellido' or 'Nombre' }}
+                                                    </small>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-dark"
+                                                    aria-labelledby="orderByDropdown">
+                                                    {% block orderBy %}
+                                                    <li>
+                                                        <a class="dropdown-item"
+                                                            href="{{ url_for('module_jya.explore', orderBy='first_name', orderDirection=request.args.get('orderDirection', 'asc'), **(filters if filters else {})) }}">Nombre</a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item"
+                                                            href="{{ url_for('module_jya.explore', orderBy='last_name', orderDirection=request.args.get('orderDirection', 'asc'), **(filters if filters else {})) }}">Apellido</a>
+                                                    </li>
+                                                    {% endblock orderBy %}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- END DROPDOWNS -->
+                                <!-- END SEARCH INPUT -->
+                                <!-- BEGIN TABLE RESULT -->
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        {% block table_content %}
+                                        {% set can_destroy = check_permission(session, 'jya_destroy') %}
+                                        <tbody>
+                                            <tr>
+                                                <th>Nombre</th>
+                                                <th>Apellido</th>
+                                                <th>DNI</th>
+                                                <th>Profesionales que lo atienden</th>
+                                            </tr>
+                                            {% if items_on_page %}
+                                            {% for legajoJyA in items_on_page %}
+                                            <tr>
+                                                <td>{{ legajoJyA.first_name }}</td>
+                                                <td>{{ legajoJyA.last_name }}</td>
+                                                <td>{{ legajoJyA.dni }}</td>
+                                                <td>{{ legajoJyA.attending_professionals }}</td>
+                                                <td>
+                                                    <a href="{{ url_for('module_jya.edit', id=legajoJyA.id) }}"
+                                                        class="btn btn-primary"
+                                                        title="{% if check_permission(session, 'jya_show') and check_permission(session, 'jya_update') %}Ver o editar{% else %}Ver{% endif %}">
+                                                        <i class="fa fa-eye"></i>
+                                                    </a>
+                                                </td>
+                                                {% if can_destroy %}
+                                                <td>
+                                                    <input onclick="confirmDelete({{ legajoJyA.id }})"
+                                                        class="btn btn-danger" type="button" name="delete"
+                                                        value="Eliminar" />
+                                                </td>
+                                                {% endif %}
+                                            </tr>
+                                            {% endfor %}
+                                            {% else %}
+                                            <tr>
+                                                <td colspan="6" class="text-center">No hay Legajos JyA cargados aun.
+                                                </td>
+                                            </tr>
+                                            {% endif %}
+                                        </tbody>
+                                        {% endblock table_content %}
+                                    </table>
+                                </div>
+                                <!-- END TABLE RESULT -->
+
+                                <div class="d-flex p-2 bd-highlight">
+                                    <!-- BEGIN PAGINATION -->
+                                    <ul class="pagination">
+                                        {% block pagination %}
+                                        {% if items_on_page %}
+                                        {% if page > 1 %}
+                                        <li class="active mx-2">
+                                            <a href="{{ url_for('module_jya.explore', page=page-1,orderDirection=request.args.get('orderDirection')) }}"
+                                                class="btn btn-primary">Anterior</a>
+                                        </li>
+                                        {% endif %}
+                                        <span class="lead">Página {{ page }} de {{ total_pages }}</span>
+                                        {% if page < total_pages %} <li class="active mx-2">
+                                            <a href="{{ url_for('module_jya.explore', page=page+1,orderDirection=request.args.get('orderDirection')) }}"
+                                                class="btn btn-primary">Siguiente</a>
+                                            </li>
+                                            {% endif %}
+                                            {% endif %}
+                                            {% endblock pagination %}
+                                    </ul>
+                                    <!-- END PAGINATION -->
+                                </div>
+                                <!-- END RESULT -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </form>
+        <!-- END SEARCH RESULT -->
+        {% block form_actions %}
+        {% for legajoJyA in items_on_page %}
+        <form id="delete_legajoJyA_{{ legajoJyA.id }}" method="POST"
+            action="{{ url_for('module_jya.delete', id=legajoJyA.id) }}">
+            <input type="hidden" name="delete" value="delete" />
+        </form>
+        {% endfor %}
+        {% endblock form_actions %}
+    </div>
+</div>
+</div>
+{% block script %}
+<script>
+    function confirmDelete(legajoJyA_id) {
+        var comfirmation = confirm("¿Está seguro que desea eliminar este registro de cobro?");
+        if (comfirmation) {
+            // me traigo el formulario
+            var form = document.getElementById('delete_legajoJyA_' + legajoJyA_id);
+            form.submit();
+        }
+    }
+
+</script>
+{% endblock script %}
+{% endblock content %}

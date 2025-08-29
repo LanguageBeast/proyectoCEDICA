@@ -1,0 +1,141 @@
+{% extends "home.html" %}
+{% block title %}
+  Editar Usuario
+{% endblock title %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='style-modules.css') }}" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
+{% endblock head %}
+{% block content %}
+  <div id="main-div">
+    <div class="row justify-content-center">
+      <div id="secondary-div-title" class="col my-4 pt-4 pb-4 border bg-body-tertiary text-center">
+        <h1 class="display-4 text-muted text-center">Editar Usuario {{ id if id else -1 }}</h1>
+      </div>
+    </div>
+    <div id="secondary-div-actions" class="row actions-div justify-content-center">
+      <form method="POST" action="" {% if 'users_update' not in user_permissions %}disabled{% endif %}>
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+          <div class="form-group mb-3">
+            {{ form.email.label(class="form-control-label") }}
+            {% if form.email.errors %}
+              {{ form.email(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.email.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.email(class="form-control") }}
+            {% endif %}
+          </div>
+          <div class="form-group mb-3">
+            {{ form.dni.label(class="form-control-label") }}
+            {% if form.dni.errors %}
+              {{ form.dni(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.dni.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.dni(class="form-control") }}
+            {% endif %}
+          </div>
+          <div class="form-group mb-3">
+            {{ form.alias.label(class="form-control-label") }}
+            {% if form.alias.errors %}
+              {{ form.alias(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.alias.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.alias(class="form-control") }}
+            {% endif %}
+          </div>
+          <div class="form-group mb-3">
+            <input type="checkbox" id="changePasswordCheckbox" onclick="togglePasswordField()" />
+            <label for="changePasswordCheckbox">Quiero cambiar la contraseña</label>
+          </div>
+          <div id="passwordDiv" class="form-group mb-3" style="display: none;">
+            {{ form.password.label(class="form-control-label") }}
+            {% if form.password.errors %}
+              {{ form.password(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.password.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.password(class="form-control", required=False) }}
+            {% endif %}
+          </div>
+          <div class="form-group mb-3">
+            {{ form.isEnabled.label(class="form-control-label") }}
+            {% if form.isEnabled.errors %}
+              {{ form.isEnabled(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.isEnabled.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              <ul class="list-group">
+                {% for subfield in form.isEnabled %}
+                  <li class="list-group-item">
+                    {{ subfield }}
+                    {{ subfield.label }}
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </div>
+          <div class="form-group mb-3">
+            {{ form.role.label(class="form-control-label") }}
+            {% if form.role.errors %}
+              {{ form.role(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.role.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              <ul class="list-group">
+                {% for subfield in form.role %}
+                  <li class="list-group-item">
+                    {{ subfield }}
+                    {{ subfield.label }}
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </div>
+        </fieldset>
+        {% if check_permission(session, "users_update") %}
+          <div class="form-group">{{ form.submit(class="btn btn-primary", value="Editar Usuario") }}</div>
+        {% else %}
+          <div class="form-group">
+            {{ form.submit(class="btn btn-primary disabled", value="No posees el permiso necesario") }}
+          </div>
+        {% endif %}
+        <a href="{{ url_for('module_users.explore') }}" class="btn btn-secondary">Cancelar</a>
+      </form>
+    </div>
+  </div>
+  <script type="text/javascript">
+      function stopEnterKey(evt) {
+          var evt = (evt) ? evt : ((event) ? event : null);
+          var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+          if ((evt.keyCode == 13) && (node.type == "text")) {
+              return false;
+          }
+      }
+      document.onkeypress = stopEnterKey;
+
+      function togglePasswordField() {
+          var checkbox = document.getElementById('changePasswordCheckbox');
+          var passwordDiv = document.getElementById('passwordDiv');
+          var passwordMessage = document.getElementById('passwordMessage');
+
+          if (checkbox.checked) {
+              passwordDiv.style.display = 'block';
+              passwordMessage.style.display = 'none';
+          } else {
+              passwordDiv.style.display = 'none';
+              passwordMessage.style.display = 'block';
+          }
+      }
+  </script>
+{% endblock content %}

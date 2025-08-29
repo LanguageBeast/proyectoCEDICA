@@ -1,0 +1,214 @@
+{% extends "home.html" %}
+{% block title %}
+  Explorar pagos
+{% endblock title %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='style-modules.css') }}" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
+{% endblock head %}
+{% block content %}
+  <div id="main-div">
+    <div class="row justify-content-center">
+      <div id="secondary-div-title" class="col my-4 pt-4 pb-4 border bg-body-tertiary text-center">
+        <h1 class="display-4 text-muted text-center">Explorar pagos</h1>
+        <p>Aquí podrá leer, editar y eliminar pagos registrados.</p>
+      </div>
+    </div>
+    <div class="row">
+      <form method="POST" action="{{ url_for('module_payment.explore') }}">
+        <div class="col-md-12">
+          <div class="grid search">
+            <div class="grid-body">
+              <div class="row">
+                <div class="col-md-3">
+                  <h2 class="grid-title">
+                    <i class="fa fa-filter"></i> Filtros
+                  </h2>
+                  <hr />
+                  <h5>Buscar por</h5>
+                  <div class="radio">
+                    <label class="lead display-7">
+                      <input type="radio" name="filter" value="payment_date" class="filter-radio" />
+                      Rango de fechas
+                    </label>
+                  </div>
+                  <div class="radio">
+                    <label class="lead display-7">
+                      <input type="radio" name="filter" value="payment_type" class="filter-radio" />
+                      Tipo de pago
+                    </label>
+                  </div>
+                  <div class="padding"></div>
+                </div>
+                <div class="col-md-9">
+                  <h2>
+                    <i class="fa fa-file-o"></i> Resultados
+                  </h2>
+                  <hr />
+                  <div class="input-group">
+                    <input type="text"
+                           name="search_string"
+                           placeholder="Seleccione filtro de búsqueda"
+                           class="form-control"
+                           id="searchInput"
+                           disabled />
+                    <div class="form-control" style="display: none;" id="start_date_s">
+                      <label for="start_date">Desde:</label>
+                      <input type="date" name="start_date" />
+                    </div>
+                    <div class="form-control" style="display: none;" id="end_date_s">
+                      <label for="end_date">Hasta:</label>
+                      <input type="date" name="end_date" />
+                    </div>
+                    <select class="form-control" id="payment_type_s" name="payment_type_s" style="display: none;">
+                      <option value="">Seleccione tipo de pago</option>
+                      <option value="Honorarios">Honorarios</option>
+                      <option value="Proveedor">Proveedor</option>
+                      <option value="Gastos varios">Gastos varios</option>
+                    </select>
+                    <span class="input-group-btn">
+                      <button class="btn btn-primary" type="submit" id="search_button" style="display: none;">
+                        <i class="fa fa-search"></i>
+                      </button>
+                    </span>
+                  </div>
+                  <div class="d-flex p-2 bd-highlight justify-content-evenly">
+                    <div class="dropdown mb-3 d-flex flex-column text-center" style="width: 320px;">
+                      <button class="btn btn-secondary dropdown-toggle"
+                              type="button"
+                              id="orderDirectionDropdown"
+                              data-bs-toggle="dropdown"
+                              aria-expanded="false">Ordenar dirección</button>
+                      <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="orderDirectionDropdown">
+                        <li>
+                          <a class="dropdown-item"
+                             href="{{ url_for('module_payment.explore', order_direction='asc', order_by=order_by, filter=filter, payment_type_s=payment_type_s, start_date=start_date, end_date=end_date) }}">Ascendente</a>
+                        </li>
+                        <li>
+                          <a class="dropdown-item"
+                             href="{{ url_for('module_payment.explore', order_direction='desc', order_by=order_by, filter=filter, payment_type_s=payment_type_s, start_date=start_date, end_date=end_date) }}">Descendente</a>
+                        </li>
+                      </ul>
+                      {% if order_direction %}
+                        <p class="lead">
+                          Actualmente ordenado por: <span class="font-weight-bold">
+                          {{ 'Ascendente' if order_direction == 'asc' else 'Descendente' }}
+                        </span>
+                      </p>
+                    {% else %}
+                      <p class="lead">Ningún orden</p>
+                    {% endif %}
+                  </div>
+                  <div class="dropdown mb-3 d-flex flex-column text-center" style="width: 320px;">
+                    <button class="btn btn-secondary dropdown-toggle"
+                            type="button"
+                            id="orderByDropdown"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">Ordenar por</button>
+                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="orderByDropdown">
+                      <li>
+                        <a class="dropdown-item"
+                           href="{{ url_for('module_payment.explore', order_by='payment_date', order_direction=order_direction, filter=filter, payment_type_s=payment_type_s, start_date=start_date, end_date=end_date) }}">Fecha de pago</a>
+                      </li>
+                    </ul>
+                    {% if order_by %}
+                      <p class="lead">
+                        Actualmente ordenado por: <span class="font-weight-bold">{{ 'Fecha de pago' if order_by == 'payment_date' }}</span>
+                    </p>
+                  {% else %}
+                    <p class="lead">Ningún orden</p>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="d-flex p-2 bd-highlight justify-content-evenly row">
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <tbody>
+                      <tr>
+                        <th>Tipo</th>
+                        <th>Fecha</th>
+                        <th>Monto</th>
+                      </tr>
+                      {% if payments %}
+                        {% for payment in payments %}
+                          <tr>
+                            <td>{{ payment.payment_type.name }}</td>
+                            <td>{{ payment.payment_date.strftime("%d/%m/%Y") }}</td>
+                            <td>{{ payment.amount }}</td>
+                            <td>
+                              <a href="{{ url_for('module_payment.edit', id=payment.id) }}" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
+                              <button onclick="confirmDelete({{ payment.id }})" class="btn btn-danger" type="button" name="delete" title="Eliminar"><i class="fa fa-trash-o"></i></button>
+                            </td>
+                          </tr>
+                        {% endfor %}
+                      {% else %}
+                        <tr>
+                          <td colspan="6" class="text-center">No se han buscado pagos aún.</td>
+                        </tr>
+                      {% endif %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="d-flex p-2 bd-highlight">
+                <ul class="pagination">
+                  {% if payments %}
+                    {% if page > 1 %}
+                      <li class="active mx-2">
+                        <a href="{{ url_for('module_payment.explore', page=page-1, order_by=order_by, order_direction=order_direction, filter=filter, payment_type_s=payment_type_s, start_date=start_date, end_date=end_date) }}"
+                           class="btn btn-primary">Anterior</a>
+                      </li>
+                    {% endif %}
+                    <span class="lead">Página {{ page }} de {{ total_pages }}</span>
+                    {% if page < total_pages %}
+                      <li class="active mx-2">
+                        <a href="{{ url_for('module_payment.explore', page=page+1, order_by=order_by, order_direction=order_direction, filter=filter, payment_type_s=payment_type_s, start_date=start_date, end_date=end_date) }}"
+                           class="btn btn-primary">Siguiente</a>
+                      </li>
+                    {% endif %}
+                  {% endif %}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    {% for payment in payments %}
+      <form id="delete_payment_{{ payment.id }}"
+            method="POST"
+            action="{{ url_for('module_payment.delete', id=payment.id) }}">
+        <input type="hidden" name="delete" value="delete" />
+      </form>
+    {% endfor %}
+  </div>
+</div>
+<script>
+    function setActive(element, dropdownId) {
+        // Remove active class from all dropdown items
+        var items = element.parentElement.parentElement.querySelectorAll('.dropdown-item');
+        items.forEach(function(item) {
+            item.classList.remove('active');
+        });
+
+        // Add active class to the clicked item
+        element.classList.add('active');
+
+        // Update the button text to show the selected value
+        var dropdownButton = document.getElementById(dropdownId);
+        var label = element.nextElementSibling; // Get the corresponding label
+        dropdownButton.textContent = label.textContent; // Set the button text to the label's text
+    }
+
+    function confirmDelete(payment_id) {
+        var comfirmation = confirm("¿Está seguro que desea eliminar este pago?");
+        if (comfirmation) {
+            // me traigo el formulario
+            var form = document.getElementById('delete_payment_' + payment_id);
+            form.submit();
+        }
+    }
+</script>
+<script src="{{ url_for('static', filename='payment_search_filters.js') }}"></script>
+{% endblock content %}

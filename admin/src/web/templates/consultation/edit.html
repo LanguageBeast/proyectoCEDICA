@@ -1,0 +1,109 @@
+{% extends "home.html" %}
+{% block title %}
+  Editar Consulta
+{% endblock title %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='style-modules.css') }}" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
+{% endblock head %}
+{% block content %}
+  <div id="main-div">
+    <div class="row justify-content-center">
+      <div id="secondary-div-title" class="col my-4 pt-4 pb-4 border bg-body-tertiary text-center">
+        <h1 class="display-4 text-muted text-center">Editar Consulta {{ id if id else -1 }}</h1>
+      </div>
+    </div>
+    <div id="secondary-div-actions" class="row actions-div justify-content-center">
+      <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group" {% if 'consultation_update' not in user_permissions %}disabled{% endif %}>
+          <div class="form-group mb-3">
+            {{ form.full_name.label(class="form-control-label") }}
+            {% if form.full_name.errors %}
+              {{ form.full_name(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.full_name.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.full_name(class="form-control") }}
+            {% endif %}
+          </div>
+          <div class="form-group mb-3">
+            {{ form.email.label(class="form-control-label") }}
+            {% if form.email.errors %}
+              {{ form.email(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.email.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.email(class="form-control") }}
+            {% endif %}
+          </div>
+          <div class="form-group mb-3">
+            {{ form.message.label(class="form-control-label") }}
+            {% if form.message.errors %}
+              {{ form.message(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.message.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.message(class="form-control") }}
+            {% endif %}
+          </div>
+          <div class="form-group mb-3" style="display: none;">
+            {{ form.captcha.label(class="form-control-label") }}
+            {% if form.captcha.errors %}
+              {{ form.captcha(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.captcha.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.captcha(class="form-control") }}
+            {% endif %}
+          </div>
+          <div class="form-group mb-3">
+            {{ form.status.label(class="form-control-label") }}
+            {% if form.status.errors %}
+              {{ form.status(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.status.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.status(class="form-control") }}
+            {% endif %}
+          </div>
+          <div class="form-group mb-3">
+            {{ form.comment.label(class="form-control-label") }}
+            {% if form.comment.errors %}
+              {{ form.comment(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.comment.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.comment(class="form-control") }}
+            {% endif %}
+          </div>
+        </fieldset>
+        {% if check_permission(session, "consultation_update") %}
+          <div class="form-group">{{ form.submit(class="btn btn-primary", value="Editar Consulta") }}</div>
+        {% else %}
+          <div class="form-group">
+            {{ form.submit(class="btn btn-primary disabled", value="No posees el permiso necesario") }}
+          </div>
+        {% endif %}
+        <a href="{{ url_for('module_consultation.explore') }}" class="btn btn-secondary">Cancelar</a>
+      </form>
+    </div>
+  </div>
+  <script type="text/javascript">
+      function stopEnterKey(evt) {
+          var evt = (evt) ? evt : ((event) ? event : null);
+          var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+          if ((evt.keyCode == 13) && (node.type == "text")) {
+              return false;
+          }
+      }
+      document.onkeypress = stopEnterKey;
+  </script>
+{% endblock content %}

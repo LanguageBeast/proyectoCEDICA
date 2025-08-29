@@ -1,0 +1,174 @@
+{% extends "home.html" %}
+{% block title %}
+  Cargar ecuestre
+{% endblock title %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='style-modules.css') }}" />
+{% endblock head %}
+{% block content %}
+  <div id="main-div">
+    <div class="row justify-content-center">
+      <div id="secondary-div-title" class="col my-4 pt-4 pb-4 border bg-body-tertiary text-center">
+        <h1 class="display-4 text-muted text-center">Cargar un nuevo Ecuestre</h1>
+        <p>Aquí podrá cargar toda la información relacionada a un nuevo Ecuestre.</p>
+      </div>
+    </div>
+    <div id="secondary-div-actions" class="row actions-div justify-content-center">
+      <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+          <div class="form-group mb-3">
+            {{ form.name.label(class="form-control-label") }}
+            {% if form.name.errors %}
+              {{ form.name(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.name.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.name(class="form-control") }}
+            {% endif %}
+          </div>
+          <div class="form-group mb-3">
+            {{ form.sex.label(class="form-control-label") }}
+            {% if form.sex.errors %}
+              {{ form.sex(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.sex.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.sex(class="form-control") }}
+            {% endif %}
+          </div>
+          <div class="form-group mb-3">
+            {{ form.breed.label(class="form-control-label") }}
+            {% if form.breed.errors %}
+              {{ form.breed(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.breed.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.breed(class="form-control") }}
+            {% endif %}
+          </div>
+          <div class="form-group mb-3">
+            {{ form.coat.label(class="form-control-label") }}
+            {% if form.coat.errors %}
+              {{ form.coat(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.coat.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.coat(class="form-control") }}
+            {% endif %}
+          </div>
+          <div class="form-group mb-3">
+            {{ form.purchase_or_donation.label(class="form-control-label") }}
+            {% if form.purchase_or_donation.errors %}
+              {{ form.purchase_or_donation(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.purchase_or_donation.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              <ul class="list-group">
+                {% for subfield in form.purchase_or_donation %}
+                  <li class="list-group-item">
+                    {{ subfield }}
+                    {{ subfield.label }}
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </div>
+          <div class="form-group mb-3">
+            {{ form.location.label(class="form-control-label") }}
+            {% if form.location.errors %}
+              {{ form.location(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.location.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.location(class="form-control") }}
+            {% endif %}
+          </div>
+          <div class="form-group mb-3">
+            {{ form.birth_date.label(class="form-control-label") }}
+            {% if form.birth_date.errors %}
+              {{ form.birth_date(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.birth_date.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.birth_date(class="form-control") }}
+            {% endif %}
+          </div>
+          <div class="form-group mb-3">
+            {{ form.entry_date.label(class="form-control-label") }}
+            {% if form.entry_date.errors %}
+              {{ form.entry_date(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.entry_date.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.entry_date(class="form-control") }}
+            {% endif %}
+          </div>
+          {# <div class="form-group mb-3">
+            {{ form.documents.label(class="form-control-label") }}
+            {% if form.documents.errors %}
+              {{ form.documents(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.documents.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.documents(class="form-control") }}
+            {% endif %}
+          </div> #}
+          <div class="form-group mb-3">
+            <div id="employees">
+              <p class="mb-0">Entrenador y/o Conductores Asignados</p>
+              {% if employees %}
+                {% for employee in employees %}
+                  {% set labelTag = "teammember_" + employee.id|string %} {# esto es un cast, pero deberia de venir todo en string#}
+                  <div class="form-check">
+                    <input type="checkbox"
+                           class="form-check-input"
+                           id="{{ labelTag }}"
+                           name="{{ labelTag }}"
+                           value="{{ employee.id }}" />
+                    <label class="form-check-label" for="{{ labelTag }}">
+                      {{ employee.first_name + ' ' + employee.last_name }}
+                    </label>
+                  </div>
+                {% endfor %}
+              {% else %}
+                <p class="text-danger font-weight-bold">No hay Entrenadores y/o Conductores asignados</p>
+              {% endif %}
+            </div>
+          </div>
+          <div class="form-group mb-3">
+            <div id="type_jya">
+              <p class="mb-0">Tipos de JYA Asignados</p>
+              {% if type_jya %}
+                {% for type in type_jya %}
+                  {% set labelTag = "jya_" + type.id|string %} {# esto es un cast #}
+                  <div class="form-check">
+                    <input type="checkbox"
+                           class="form-check-input"
+                           id="{{ labelTag }}"
+                           name="{{ labelTag }}"
+                           value="{{ type.id }}" />
+                    <label class="form-check-label" for="{{ labelTag }}">{{ type.name }}</label>
+                  </div>
+                {% endfor %}
+              {% else %}
+                <p class="text-danger font-weight-bold">No hay tipos de JYA asignados</p>
+              {% endif %}
+            </div>
+          </fieldset>
+          <div class="form-group">{{ form.submit(class="btn btn-primary", value="Enviar") }}</div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock content %}

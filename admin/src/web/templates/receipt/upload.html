@@ -1,0 +1,38 @@
+{% extends "home.html" %}
+{% import "form_macros.html" as form_macros %}
+{% block title %}
+Cargar Recibo
+{% endblock title %}
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='style-modules.css') }}" />
+{% endblock head %}
+{% block content %}
+<div id="main-div">
+  <div class="row justify-content-center">
+    <div id="secondary-div-title" class="col my-4 pt-4 pb-4 border bg-body-tertiary text-center">
+      <h1 class="display-4 text-muted text-center">Cargar un nuevo Recibo</h1>
+      <p>Aquí podrá cargar toda la información relacionada a un nuevo recibo.</p>
+    </div>
+  </div>
+  <div id="secondary-div-actions" class="row actions-div justify-content-center">
+    <form method="POST" action="">
+      {{ form.hidden_tag() }}
+      <fieldset class="form-group">
+
+        {{ form_macros.render_field(form.payment_date, is_required=True) }}
+        {{ form_macros.render_field(form.payment_method, is_required=True) }}
+        {{ form_macros.render_field(form.amount, is_required=True) }}
+        {{ form_macros.render_select("Miembro de Equipo que recibió el pago", "team_member", "team_member",
+        team_members, current_team_member, "Selecciona un miembro de equipo", is_required=True) }}
+        {{ form_macros.render_select("Jinete o amazona que dio el pago", "fileJyA", "fileJyA", fileJyAs,
+        current_fileJyA,
+        "Selecciona un legajo JyA", is_required=True) }}
+        {{ form_macros.render_field(form.notes) }}
+
+      </fieldset>
+      <div class="form-group">{{ form.submit(class="btn btn-primary", value="Enviar") }}</div>
+    </form>
+  </div>
+</div>
+{% endblock content %}

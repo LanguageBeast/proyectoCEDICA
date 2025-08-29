@@ -1,0 +1,131 @@
+{% macro render_field(field, is_editable=True, is_required=False) %}
+<div class="form-group mb-3">
+    {{ field.label(class="form-control-label") }}
+    {{ field(class="form-control" if not field.errors else "form-control is-invalid", disabled=not is_editable,
+    required=is_required) }}
+    {% if not is_editable %}
+    {{ field(value=field.data, type="hidden") }}
+    {% endif %}
+    {% if field.errors %}
+    <div class="invalid-feedback">
+        {% for error in field.errors %}<span>{{ error }}</span>{% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endmacro %}
+
+{% macro render_select(label, id, name, options, selected_option=None, empty_text="Selecciona una opción",
+is_editable=True, is_required=False) %}
+<div class="form-group mb-3">
+    <label for="{{ id }}">{{ label }}</label>
+    <select class="form-control" id="{{ id }}" name="{{ name }}" {% if not is_editable %}disabled{% endif %} {% if
+        is_required %}required{% endif %}>
+        {% if options %}
+        <option value="" disabled {% if not selected_option %} selected {% endif %}>{{ empty_text }}</option>
+        {% for option in options %}
+        <option value="{{ option.id }}" {% if selected_option and option.id==selected_option.id %} selected {% endif %}>
+            {{ option.first_name + ' ' + option.last_name }}
+        </option>
+        {% endfor %}
+        {% else %}
+        <option value="" disabled>No hay opciones disponibles</option>
+        {% endif %}
+    </select>
+</div>
+{% endmacro %}
+
+{% macro render_radio_field(field, is_editable=True, is_required=False) %}
+<div class="form-group mb-3">
+    {{ field.label(class="form-control-label") }}
+    <div>
+        {% for subfield in field %}
+        <div class="form-check">
+            {{ subfield(class="form-check-input toggle-radio", disabled=not is_editable, required=is_required) }}
+            {{ subfield.label(class="form-check-label") }}
+        </div>
+        {% endfor %}
+    </div>
+    {% if field.errors %}
+    <div class="invalid-feedback">
+        {% for error in field.errors %}<span>{{ error }}</span>{% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endmacro %}
+
+{% macro render_multiselect_checkbox(field, is_editable=True) %}
+<div class="form-group mb-3">
+    {{ field.label(class="form-control-label") }}
+    <div>
+        {% for subfield in field %}
+        <div class="form-check">
+            {{ subfield(class="form-check-input" if not field.errors else "form-check-input is-invalid", disabled=not
+            is_editable) }}
+            {{ subfield.label(class="form-check-label") }}
+        </div>
+        {% endfor %}
+    </div>
+    {% if field.errors %}
+    <div class="invalid-feedback d-block">
+        {% for error in field.errors %}
+        <br>
+        <span class="mt-2">{{ error }}</span><br>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endmacro %}
+
+{% macro render_select(label, id, name, options, selected_option=None, empty_text="Selecciona una opción",
+is_editable=True, is_required=False, disabled_empty=True) %}
+<div class="form-group mb-3">
+    <label for="{{ id }}">{{ label }}</label>
+    <select class="form-control" id="{{ id }}" name="{{ name }}" {% if not is_editable %}disabled{% endif %} {% if
+        is_required %}required{% endif %}>
+        <option value="" {% if disabled_empty %}disabled {% endif %} {% if not selected_option %} selected {% endif %}>
+            {{ empty_text }}</option>
+        {% if options %}
+        {% for option in options %}
+        <option value="{{ option.id }}" {% if selected_option and option.id==selected_option.id %} selected {% endif %}>
+            {{ option.first_name + ' ' + option.last_name }}
+        </option>
+        {% endfor %}
+        {% else %}
+        {% if selected_option and selected_option.deleted==True %}
+        <option value="{{selected_option.id}}" selected>
+            {{ selected_option.first_name + ' ' + selected_option.last_name + '(Eliminado)'}}
+        </option>
+        {% else %}
+        <option value="" disabled selected>No hay opciones disponibles</option>
+        {% endif %}
+        {% endif %}
+    </select>
+</div>
+{% endmacro %}
+
+{% macro render_select_equestrian(label, id, name, options, selected_option=None, empty_text="Selecciona una opción",
+is_editable=True, is_required=False, disabled_empty=True) %}
+<div class="form-group mb-3">
+    <label for="{{ id }}">{{ label }}</label>
+    <select class="form-control" id="{{ id }}" name="{{ name }}" {% if not is_editable %}disabled{% endif %} {% if
+        is_required %}required{% endif %}>
+        <option value="" {% if disabled_empty %}disabled {% endif %} {% if not selected_option %} selected {% endif %}>
+            {{ empty_text }}</option>
+        {% if options %}
+        {% for option in options %}
+        <option value="{{ option.id }}" {% if selected_option and option.id==selected_option.id %} selected {% endif %}>
+            {{ option.name }}
+        </option>
+        {% endfor %}
+        {% else %}
+        {% if selected_option and selected_option.deleted==True %}
+        <option value="{{selected_option.id}}" selected>
+            {{ selected_option.name + '(Eliminado)'}}
+        </option>
+        {% else %}
+        <option value="" disabled selected>No hay opciones disponibles</option>
+        {% endif %}
+        {% endif %}
+    </select>
+</div>
+{% endmacro %}

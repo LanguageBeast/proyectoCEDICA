@@ -1,0 +1,208 @@
+{% extends "home.html" %}
+{% block title %}
+Explorar Registros de Cobro
+{% endblock title %}
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='style-modules.css') }}" />
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
+{% endblock head %}
+{% block content %}
+<div id="main-div">
+  <div class="row justify-content-center">
+    <div id="secondary-div-title" class="col my-4 pt-4 pb-4 border bg-body-tertiary text-center">
+      <h1 class="display-4 text-muted text-center">Explorar Registros de Cobro</h1>
+      <p>Aquí podrá leer, editar y eliminar Registros de Cobros.</p>
+    </div>
+  </div>
+  <div class="row">
+    <!-- BEGIN SEARCH RESULT -->
+    <form method="get">
+      <input type="hidden" name="reset" value="0">
+      <input type="hidden" name="orderDirection" value="{{ request.args.get('orderDirection', 'asc') }}">
+      <div class="col-md-12">
+        <div class="grid search">
+          <div class="grid-body">
+            <div class="row">
+              <!-- BEGIN FILTERS -->
+              <div class="col-md-3">
+                <h2 class="grid-title">
+                  <i class="fa fa-filter"></i> Buscar por:
+                </h2>
+                <hr />
+                <!-- BEGIN GENERAL FILTERS -->
+                <div class="input-group mb-3">
+                  <h5>Buscar</h5>
+                  <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                      <i class="fa fa-search"></i>
+                    </button>
+                  </span>
+                </div>
+                <label class="lead display-7">
+                  Nombre de Receptor
+                  <input type="text" class="form-control" name="team_member_name"
+                    value="{{ filters.get('team_member_name', '') }}" />
+                </label>
+                <label class="lead display-7">
+                  Apellido de Receptor
+                  <input type="text" class="form-control" name="team_member_surname"
+                    value="{{ filters.get('team_member_surname', '') }}" />
+                </label>
+                <label class="lead display-7">
+                  Metodo de Pago
+                  <input type="text" class="form-control" name="payment_method"
+                    value="{{ filters.get('payment_method', '') }}" />
+                </label>
+                <label class="lead display-7">
+                  Desde la fecha:
+                  {% if errors.from_date %}
+                  <div class="text-danger">{{ errors.from_date }}</div>
+                  {% endif %}
+                  <input type="date" class="form-control" name="start_date"
+                    value="{{ filters.get('start_date', '') }}" />
+                </label>
+                <label class="lead display-7">
+                  Hasta la fecha:
+                  {% if errors.to_date %}
+                  <div class="text-danger">{{ errors.to_date }}</div>
+                  {% endif %}
+                  <input type="date" class="form-control" name="end_date" value="{{ filters.get('end_date', '') }}" />
+                </label>
+                <!-- END GENERAL FILTERS -->
+                <div class="padding"></div>
+              </div>
+              <!-- END FILTERS -->
+              <!-- BEGIN RESULT -->
+              <div class="col-md-9">
+                <h2>
+                  <i class="fa fa-file-o"></i> Resultados
+                </h2>
+                <hr />
+                <!-- DROPDOWNS --->
+                <div class="d-flex justify-content-evenly mb-3">
+                  <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="orderDirectionDropdown"
+                      data-bs-toggle="dropdown" aria-expanded="false">
+                      <span>Ordenar dirección</span>
+                      <div>
+                        <small class="text-white">
+                          {% if request.args.get('orderDirection') == 'desc' %}
+                          Descendente
+                          {% else %}
+                          Ascendente
+                          {% endif %}
+                        </small>
+                      </div>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="orderDirectionDropdown">
+                      <li>
+                        <a class="dropdown-item"
+                          href="{{ url_for('module_receipt.explore', orderDirection='asc',  **(filters if filters else {})) }}">Ascendente</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item"
+                          href="{{ url_for('module_receipt.explore', orderDirection='desc',  **(filters if filters else {})) }}">Descendente</a>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="dropdown mb-3">
+                  </div>
+                </div>
+                <!-- END DROPDOWNS -->
+                <!-- END SEARCH INPUT -->
+                <!-- BEGIN TABLE RESULT -->
+                {% set can_destroy = check_permission(session, 'receipt_destroy') %}
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <tbody>
+                      <tr>
+                        <th>Fecha De Pago</th>
+                        <th>Miembro de Equipo Receptor</th>
+                        <th>Jinete o Amazona</th>
+                        <th>Metodo De Pago</th>
+                        <th>Monto</th>
+                      </tr>
+                      {% if items_on_page %}
+                      {% for receipt in items_on_page %}
+                      <tr>
+                        <td>{{ receipt.payment_date }}</td>
+                        <td>{{ receipt.team_member.first_name + " " + receipt.team_member.last_name}}</td>
+                        <td>{{ receipt.fileJyA.first_name + " " + receipt.fileJyA.last_name}}</td>
+                        <td>{{ receipt.payment_method }}</td>
+                        <td>{{ receipt.amount }}</td>
+                        <td>
+                          <a href="{{ url_for('module_receipt.edit', id=receipt.id) }}" class="btn btn-primary"
+                            title="{% if check_permission(session, 'receipt_show') and check_permission(session, 'receipt_update') %}Ver o editar{% else %}Ver{% endif %}">
+                            <i class="fa fa-eye"></i>
+                          </a>
+                        </td>
+                        {% if can_destroy %}
+                        <td>
+                          <input onclick="confirmDelete({{ receipt.id }})" class="btn btn-danger" type="button"
+                            name="delete" value="Eliminar" />
+                        </td>
+                        {% endif %}
+                      </tr>
+                      {% endfor %}
+                      {% else %}
+                      <tr>
+                        <td colspan="6" class="text-center">No hay Registros de cobro aún.</td>
+                      </tr>
+                      {% endif %}
+                    </tbody>
+                  </table>
+                </div>
+                <!-- END TABLE RESULT -->
+
+                <div class="d-flex p-2 bd-highlight">
+                  <!-- BEGIN PAGINATION -->
+                  <ul class="pagination">
+                    {% if items_on_page %}
+                    {% if page > 1 %}
+                    <li class="active mx-2">
+                      <a href="{{ url_for('module_receipt.explore', page=page-1,orderDirection=request.args.get('orderDirection')) }}"
+                        class="btn btn-primary">Anterior</a>
+                    </li>
+                    {% endif %}
+                    <span class="lead">Página {{ page }} de {{ total_pages }}</span>
+                    {% if page < total_pages %} <li class="active mx-2">
+                      <a href="{{ url_for('module_receipt.explore', page=page+1,orderDirection=request.args.get('orderDirection')) }}"
+                        class="btn btn-primary">Siguiente</a>
+                      </li>
+                      {% endif %}
+                      {% endif %}
+                  </ul>
+                  <!-- END PAGINATION -->
+                </div>
+                <!-- END RESULT -->
+              </div>
+            </div>
+          </div>
+        </div>
+    </form>
+    <!-- END SEARCH RESULT -->
+    {% block form%}
+    {% for receipt in items_on_page %}
+    <form id="delete_receipt_{{ receipt.id }}" method="POST"
+      action="{{ url_for('module_receipt.delete', id=receipt.id) }}">
+      <input type="hidden" name="delete" value="delete" />
+    </form>
+    {% endfor %}
+    {% endblock form%}
+  </div>
+</div>
+</div>
+<script>
+
+  function confirmDelete(receipt_id) {
+    var comfirmation = confirm("¿Está seguro que desea eliminar este registro de cobro?");
+    if (comfirmation) {
+      // me traigo el formulario
+      var form = document.getElementById('delete_receipt_' + receipt_id);
+      form.submit();
+    }
+  }
+
+</script>
+{% endblock content %}

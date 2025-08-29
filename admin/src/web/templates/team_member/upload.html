@@ -1,0 +1,274 @@
+{% extends "home.html" %}
+
+{% block title %}
+  Cargar miembro del equipo
+{% endblock title %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='style-modules.css') }}" />
+{% endblock head %}
+
+{% block content %}
+  <div id="main-div">
+    <div class="row justify-content-center">
+      <div id="secondary-div-title" class="col my-4 pt-4 pb-4 border bg-body-tertiary text-center">
+        <h1 class="display-4 text-muted text-center">Registrar un nuevo miembro del equipo</h1>
+        <p>Aquí podrá cargar la información del miembro del equipo.</p>
+      </div>
+    </div>
+
+    <div id="secondary-div-actions" class="row actions-div justify-content-center">
+      <form method="POST" action="" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+
+        <fieldset class="form-group">
+          <!-- Nombre -->
+          <div class="form-group mb-3">
+            {{ form.first_name.label(class="form-control-label") }}
+            {% if form.first_name.errors %}
+              {{ form.first_name(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.first_name.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.first_name(class="form-control") }}
+            {% endif %}
+          </div>
+
+          <!-- Apellido -->
+          <div class="form-group mb-3">
+            {{ form.last_name.label(class="form-control-label") }}
+            {% if form.last_name.errors %}
+              {{ form.last_name(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.last_name.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.last_name(class="form-control") }}
+            {% endif %}
+          </div>
+
+          <!-- DNI -->
+          <div class="form-group mb-3">
+            {{ form.dni.label(class="form-control-label") }}
+            {% if form.dni.errors %}
+              {{ form.dni(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.dni.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.dni(class="form-control") }}
+            {% endif %}
+          </div>
+
+          <!-- Domicilio -->
+          <div class="form-group mb-3">
+            {{ form.address.label(class="form-control-label") }}
+            {% if form.address.errors %}
+              {{ form.address(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.address.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.address(class="form-control") }}
+            {% endif %}
+          </div>
+
+          <!-- Email -->
+          <div class="form-group mb-3">
+            {{ form.email.label(class="form-control-label") }}
+            {% if form.email.errors %}
+              {{ form.email(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.email.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.email(class="form-control") }}
+            {% endif %}
+          </div>
+
+          <!-- Localidad -->
+          <div class="form-group mb-3">
+            {{ form.location.label(class="form-control-label") }}
+            {% if form.location.errors %}
+              {{ form.location(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.location.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.location(class="form-control") }}
+            {% endif %}
+          </div>
+
+          <!-- Teléfono -->
+          <div class="form-group mb-3">
+            {{ form.phone.label(class="form-control-label") }}
+            {% if form.phone.errors %}
+              {{ form.phone(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.phone.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.phone(class="form-control") }}
+            {% endif %}
+          </div>
+
+          <!-- Profesión -->
+          <div class="form-group mb-3">
+            {{ form.profession.label(class="form-control-label") }}
+            {% if form.profession.errors %}
+              {{ form.profession(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.profession.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.profession(class="form-control") }}
+            {% endif %}
+          </div>
+
+          <!-- Puesto laboral -->
+          <div class="form-group mb-3">
+            {{ form.job_position.label(class="form-control-label") }}
+            {% if form.job_position.errors %}
+              {{ form.job_position(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.job_position.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.job_position(class="form-control") }}
+            {% endif %}
+          </div>
+
+          <!-- Fecha de inicio -->
+          <div class="form-group mb-3">
+            {{ form.start_date.label(class="form-control-label") }}
+            {% if form.start_date.errors %}
+              {{ form.start_date(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.start_date.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.start_date(class="form-control") }}
+            {% endif %}
+          </div>
+
+          <!-- Fecha de Cese -->
+          <div class="form-group mb-3">
+            {{ form.end_date.label(class="form-control-label") }}
+            {% if form.end_date.errors %}
+              {{ form.end_date(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.end_date.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.end_date(class="form-control") }}
+            {% endif %}
+          </div>
+
+          <!-- Nombre del contacto de Emergencia -->
+          <div class="form-group mb-3">
+            {{ form.emergency_contact_name.label(class="form-control-label") }}
+            {% if form.emergency_contact_name.errors %}
+              {{ form.emergency_contact_name(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.emergency_contact_name.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.emergency_contact_name(class="form-control") }}
+            {% endif %}
+          </div>
+          <!-- Telefono del contacto de Emergencia -->
+          <div class="form-group mb-3">
+            {{ form.emergency_contact_phone.label(class="form-control-label") }}
+            {% if form.emergency_contact_phone.errors %}
+              {{ form.emergency_contact_phone(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.emergency_contact_phone.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.emergency_contact_phone(class="form-control") }}
+            {% endif %}
+          </div>
+
+          <!-- Obra Social -->
+          <div class="form-group mb-3">
+            {{ form.health_insurance.label(class="form-control-label") }}
+            {% if form.health_insurance.errors %}
+              {{ form.health_insurance(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.health_insurance.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.health_insurance(class="form-control") }}
+            {% endif %}
+          </div>
+
+          <!-- N° de Afiliado -->
+          <div class="form-group mb-3">
+            {{ form.insurance_number.label(class="form-control-label") }}
+            {% if form.insurance_number.errors %}
+              {{ form.insurance_number(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.insurance_number.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.insurance_number(class="form-control") }}
+            {% endif %}
+          </div>
+
+          <!-- Condición -->
+          <div class="form-group mb-3">
+            {{ form.condition.label(class="form-control-label") }}
+            {% if form.condition.errors %}
+              {{ form.condition(class="form-control is-invalid list-unstyled") }}
+              <div class="invalid-feedback">
+                {% for error in form.condition.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.condition(class="form-control list-unstyled") }}
+            {% endif %}
+          </div>
+
+          <div class="form-group mb-3">
+            {{ form.active.label(class="form-control-label") }}
+            {% if form.active.errors %}
+              {{ form.active(class="form-check-input is-invalid", id="active") }}
+              <div class="invalid-feedback">
+                {% for error in form.active.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+              {% else %}
+                {{ form.active(class="form-check-input", id="active") }}
+              {% endif %}
+              <label class="form-check-label" for="active">Sí</label>
+          </div>
+          <div class="form-group mb-3">
+            {{ form.documents.label(class="form-control-label") }}
+            <input type="file" id="documentInput" class="form-control" name="documents" multiple>
+            <div id="fileList" class="mt-2"></div>
+            {% if form.documents.errors %}
+                {{ form.documents(class="form-control is-invalid list-unstyled", multiple=True) }}
+                <div class="invalid-feedback">
+                    {% for error in form.documents.errors %}<span>{{ error }}</span>{% endfor %}
+                </div>
+            {% endif %}
+          </div>
+        
+        </fieldset>
+        <div class="form-group">{{ form.submit(class="btn btn-primary", value="Enviar") }}</div>
+      </form>
+    </div>
+  </div>
+  <script>
+    document.getElementById('documentInput').addEventListener('change', function(event) {
+        const fileListDiv = document.getElementById('fileList');
+        fileListDiv.innerHTML = ''; // Limpiar la lista antes de agregar
+        const files = event.target.files;
+        for (let i = 0; i < files.length; i++) {
+            const fileItem = document.createElement('div');
+            fileItem.textContent = files[i].name;
+            fileListDiv.appendChild(fileItem);
+        }
+    });
+    </script>
+{% endblock content %}

@@ -1,0 +1,153 @@
+{% extends "jya/explore.html" %}
+{% block formhidden %}
+<input type="hidden" name="orderDirection" value="{{ request.args.get('orderDirection', 'asc') }}">
+<input type="hidden" name="orderBy" value="{{ request.args.get('orderBy', 'first_name') }}">
+<input type="hidden" name="debt" value="{{ '1' }}">
+{% endblock formhidden %}
+{% block filters %}
+<div class="col-md-3">
+    <h2 class="grid-title">
+        <i class="fa fa-filter"></i> Buscar por:
+    </h2>
+    <hr />
+    <!-- BEGIN GENERAL FILTERS -->
+    <div class="input-group mb-3">
+        <h5 class="pe-2">Buscar</h5>
+        <span class="input-group-btn">
+            <button class="btn btn-primary" type="submit">
+                <i class="fa fa-search"></i>
+            </button>
+        </span>
+    </div>
+    <label class="lead display-7">
+        Nombre
+        <input type="text" class="form-control" name="first_name" value="{{ filters.get('first_name', '') }}"
+            maxlength="25" />
+    </label>
+    <label class="lead display-7">
+        Apellido
+        <input type="text" class="form-control" name="last_name" value="{{ filters.get('last_name', '') }}"
+            maxlength="25" />
+    </label>
+    <label class="lead display-7">
+        DNI
+        <input type="text" class="form-control" name="dni" value="{{ filters.get('dni', '') }}" maxlength="15" />
+    </label>
+</div>
+<!-- END FILTERS -->
+{% endblock filters %}
+{% block orderDirection %}
+<li>
+    <a class="dropdown-item"
+        href="{{ url_for('module_jya.explore', debt=1, orderDirection='asc', **(filters if filters else {})) }}">Ascendente</a>
+</li>
+<li>
+    <a class="dropdown-item"
+        href="{{ url_for('module_jya.explore', debt=1, orderDirection='desc', **(filters if filters else {})) }}">Descendente</a>
+</li>
+{% endblock orderDirection %}
+{% block orderBy %}
+<li>
+    <a class="dropdown-item"
+        href="{{ url_for('module_jya.explore', debt=1,orderBy='first_name', orderDirection=request.args.get('orderDirection', 'asc'), **(filters if filters else {})) }}">Nombre</a>
+</li>
+<li>
+    <a class="dropdown-item"
+        href="{{ url_for('module_jya.explore', debt=1,orderBy='last_name', orderDirection=request.args.get('orderDirection', 'asc'), **(filters if filters else {})) }}">Apellido</a>
+</li>
+{% endblock orderBy %}
+{% block table_content %}
+<tbody>
+    <tr>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>DNI</th>
+        <th>Pagos al día</th>
+    </tr>
+    {% if items_on_page %}
+    {% for legajoJyA in items_on_page %}
+    <tr>
+        <td>{{ legajoJyA.first_name }}</td>
+        <td>{{ legajoJyA.last_name }}</td>
+        <td>{{ legajoJyA.dni }}</td>
+        {% if legajoJyA.in_debt %}
+        <td>No</td>
+        <td class="text-center">
+            <input onclick="confirmNotDeudor({{ legajoJyA.id }})" class="btn btn-primary btn-sm" type="button"
+                name="delete" value="Marcar como no Deudor" />
+        </td>
+        {% else %}
+        <td>Si</td>
+        <td class="text-center"> <!-- Centrar contenido en la celda -->
+            <input onclick="confirmDeudor({{ legajoJyA.id }})" class="btn btn-danger btn-sm" type="button" name="delete"
+                value="Marcar como Deudor" />
+        </td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+    {% else %}
+    <tr>
+        <td colspan="6" class="text-center">No hay Legajos JyA cargados aun.
+        </td>
+    </tr>
+    {% endif %}
+</tbody>
+{% endblock table_content %}
+{% block pagination %}
+{% if items_on_page %}
+{% if page > 1 %}
+<li class="active mx-2">
+    <a href="{{ url_for('module_jya.explore', debt=1,page=page-1,orderDirection=request.args.get('orderDirection')) }}"
+        class="btn btn-primary">Anterior</a>
+</li>
+{% endif %}
+<span class="lead">Página {{ page }} de {{ total_pages }}</span>
+{% if page < total_pages %} <li class="active mx-2">
+    <a href="{{ url_for('module_jya.explore', debt=1,page=page+1,orderDirection=request.args.get('orderDirection')) }}"
+        class="btn btn-primary">Siguiente</a>
+    </li>
+    {% endif %}
+    {% endif %}
+    {% endblock pagination %}
+
+    {% block form_actions %}
+    {% for legajoJyA in items_on_page %}
+    <form id="mark_deudor_{{ legajoJyA.id }}" method="POST"
+        action="{{ url_for('module_jya.mark_deudor', id=legajoJyA.id) }}">
+        <!-- Aquí puedes agregar campos ocultos u otros elementos si es necesario -->
+    </form>
+    <form id="mark_not_deudor_{{ legajoJyA.id }}" method="POST"
+        action="{{ url_for('module_jya.mark_not_deudor', id=legajoJyA.id) }}">
+        <!-- Aquí puedes agregar campos ocultos u otros elementos si es necesario -->
+    </form>
+    {% endfor %}
+    {% endblock form_actions %}
+
+    {% block script %}
+    <script>
+        function confirmDeudor(legajoJyA_id) {
+            var confirmation = confirm("¿Está seguro que quiere marcar este legajo como deudor?");
+            if (confirmation) {
+                // Obtiene el formulario usando el ID generado en el bloque anterior
+                var form = document.getElementById('mark_deudor_' + legajoJyA_id);
+                if (form) { // Verifica que el formulario existe
+                    form.submit();
+                } else {
+                    console.error('Formulario no encontrado para el ID: ' + legajoJyA_id);
+                }
+            }
+        }
+        function confirmNotDeudor(legajoJyA_id) {
+            var confirmation = confirm("¿Está seguro que quiere marcar este legajo como no deudor?");
+            if (confirmation) {
+                // Obtiene el formulario usando el ID generado en el bloque anterior
+                var form = document.getElementById('mark_not_deudor_' + legajoJyA_id);
+                if (form) { // Verifica que el formulario existe
+                    form.submit();
+                } else {
+                    console.error('Formulario no encontrado para el ID: ' + legajoJyA_id);
+                }
+            }
+        }
+    </script>
+    {% endblock script %}

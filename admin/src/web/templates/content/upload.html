@@ -1,0 +1,79 @@
+{% extends "home.html" %}
+{% import "form_macros.html" as form_macros %}
+{% block title %}
+Cargar Contenido
+{% endblock title %}
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='style-modules.css') }}" />
+{% endblock head %}
+{% block content %}
+<div id="main-div">
+    <div class="row justify-content-center">
+        <div id="secondary-div-title" class="col my-4 pt-4 pb-4 border bg-body-tertiary text-center">
+            <h1 class="display-4 text-muted text-center">Cargar un nuevo Contenido</h1>
+            <p>Aquí podrá cargar toda la información relacionada a un nuevo contenido.</p>
+        </div>
+    </div>
+    <div id="secondary-div-actions" class="row actions-div justify-content-center">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+
+                {{ form_macros.render_field(form.title, is_required=True) }}
+                {{ form_macros.render_field(form.summary, is_required=True) }}
+
+                <div class="form-group mb-3">
+                    {{ form.content.label(class="form-control-label") }}
+
+                    <textarea class="form-control{% if form.content.errors %} is-invalid{% endif %}"
+                        name="{{ form.content.name }}" id="{{ form.content.id }}"
+                        placeholder="Ingrese el cuerpo del contenido" rows="4" oninput="autoResize(this)"
+                        style="min-height: 4rem; max-height: 20rem;" required></textarea>
+
+                    {% if form.content.errors %}
+                    <div class="invalid-feedback">
+                        {% for error in form.content.errors %}
+                        <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+
+
+            </fieldset>
+            <div class="form-group">{{ form.submit(class="btn btn-primary", value="Enviar") }}</div>
+        </form>
+    </div>
+</div>
+<script>
+    function autoResize(element) {
+        element.style.height = 'auto';
+        element.style.height = (element.scrollHeight) + 'px';
+    }
+    document.querySelector('form').addEventListener('submit', function (event) {
+        let formIsValid = true;
+        let invalidField = null;
+
+        const fields = document.querySelectorAll('form input, form textarea, form select');
+
+        fields.forEach(function (field) {
+            const fieldValue = field.value.trim();
+
+            if (fieldValue === "") {
+                formIsValid = false;
+                invalidField = field;
+                field.classList.add('is-invalid');
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+
+        if (!formIsValid) {
+            event.preventDefault();
+            alert("Por favor, asegúrese de que todos los campos estén completos y no contengan solo espacios o saltos de línea.");
+            invalidField.focus();
+        });
+</script>
+{% endblock content %}

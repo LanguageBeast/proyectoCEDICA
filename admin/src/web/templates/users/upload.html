@@ -1,0 +1,106 @@
+{% extends "home.html" %}
+{% block title %}
+  Cargar usuario
+{% endblock title %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='style-users.css') }}" />
+{% endblock head %}
+{% block content %}
+  <div id="main-div">
+    <div class="row justify-content-center">
+      <div id="secondary-div-title" class="col my-4 pt-4 pb-4 border bg-body-tertiary text-center">
+        <h1 class="display-4 text-muted text-center">Cargar un nuevo Usuario</h1>
+        <p>Aquí podrá cargar toda la información relacionada a un nuevo Usuario.</p>
+      </div>
+    </div>
+    <div id="secondary-div-actions" class="row actions-div justify-content-center">
+      <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+          <div class="form-group mb-3">
+            {{ form.email.label(class="form-control-label") }}
+            {% if form.email.errors %}
+              {{ form.email(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.email.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.email(class="form-control") }}
+            {% endif %}
+          </div>
+          <div class="form-group mb-3">
+            {{ form.dni.label(class="form-control-label") }}
+            {% if form.dni.errors %}
+              {{ form.dni(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.dni.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.dni(class="form-control") }}
+            {% endif %}
+          </div>
+          <div class="form-group mb-3">
+            {{ form.alias.label(class="form-control-label") }}
+            {% if form.alias.errors %}
+              {{ form.alias(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.alias.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.alias(class="form-control") }}
+            {% endif %}
+          </div>
+          <div class="form-group mb-3">
+            {{ form.password.label(class="form-control-label") }}
+            {% if form.password.errors %}
+              {{ form.password(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.password.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.password(class="form-control") }}
+            {% endif %}
+          </div>
+          <div class="form-group mb-3">
+            {{ form.isEnabled.label(class="form-control-label") }}
+            {% if form.isEnabled.errors %}
+              {{ form.isEnabled(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.isEnabled.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              <ul class="list-group">
+                {% for subfield in form.isEnabled %}
+                  <li class="list-group-item">
+                    {{ subfield }}
+                    {{ subfield.label }}
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </div>
+          <div class="form-group mb-3">
+            {{ form.role.label(class="form-control-label") }}
+            {% if form.role.errors %}
+              {{ form.role(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.role.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              <ul class="list-group">
+                {% for subfield in form.role %}
+                  <li class="list-group-item">
+                    {{ subfield }}
+                    {{ subfield.label }}
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </div>
+        </fieldset>
+        <div class="form-group">{{ form.submit(class="btn btn-primary", value="Enviar") }}</div>
+      </form>
+    </div>
+  </div>
+{% endblock content %}

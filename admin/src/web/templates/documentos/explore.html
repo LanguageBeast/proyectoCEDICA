@@ -1,0 +1,170 @@
+{% extends "home.html" %}
+{% import "form_macros.html" as form_macros %}
+{% block title %}
+Cargar legajo
+{% endblock title %}
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='style-modules.css') }}" />
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+{% endblock head %}
+{% block content %}
+
+<div class="mt-4">
+	<h5>Aquí se listan los documentos asociados al legajo JyA</h5>
+
+	<div class="table-responsive">
+		<table class="table table-hover">
+			{% block table_content %}
+			{% set can_destroy = check_permission(session, 'jya_destroy') %}
+			{% set can_edit = check_permission(session, 'jya_update') %}
+			{% set can_create = check_permission(session, 'jya_create') %}
+			<tbody>
+				<tr>
+					<th>Fecha de Subida</th>
+					<th>Nombre</th>
+					<th>Tipo</th>
+					<th>Acciones</th>
+				</tr>
+				{% if items_on_page %}
+				{% for document in items_on_page %}
+				<tr>
+					<td>{{ document.creation_date.strftime('%d/%m/%Y') }}</td>
+					<td>{{ document.name }}</td>
+					<td>{{ document.typedoc_fileJyA.name }}</td>
+					<td>
+						{% if document.link %}
+							<a href="{{ document.link }}" class="btn btn-primary me-1" title="Ver enlace" target="_blank"><i class="fa fa-external-link"></i></a>
+						{% else %}
+							<a href="{{ document_url(document.id ~ '.' ~ document.path) }}" class="btn btn-primary me-1" title="Descargar documento" target="_blank" download><i class="fa fa-download"></i></a>
+						{% endif %}
+						{% if can_edit %}
+							<a href="{{ url_for('module_jya.edit_document', id=document.id) }}" class="btn btn-success me-1" title="Editar"><i class="fa fa-pencil"></i></a>
+						{% endif %}
+						{% if can_destroy %}
+							<button onclick="confirmDelete({{ document.id }})" class="btn btn-danger" type="button" name="delete" title="Eliminar"><i class="fa fa-trash-o"></i></button>
+						{% endif %}
+					</td>
+				</tr>
+				{% endfor %}
+				{% else %}
+				<tr>
+					<td colspan="6" class="text-center">No hay documentos cargados aun para este legajo.
+					</td>
+				</tr>
+				{% endif %}
+			</tbody>
+			{% endblock table_content %}
+		</table>
+	</div>
+	<!-- END TABLE RESULT -->
+
+	{% for document in items_on_page %}
+		<form id="delete_document_{{ document.id }}" method="POST" action="{{ url_for('module_jya.delete_doc', id=document.id) }}">
+			<input type="hidden" name="delete" value="delete" />
+		</form>
+  {% endfor %}
+
+	<!-- Botón para abrir el modal de enlace -->
+	<button id="add-link-button" class="btn btn-primary me-1" data-toggle="modal" data-target="#addEnlaceModal"><i class="fa fa-plus"></i> Cargar Enlace</button>
+
+	<!-- Botón para abrir el modal de documentos -->
+	<button id="add-document-button" class="btn btn-primary me-1" data-toggle="modal" data-target="#addDocumentoModal"><i class="fa fa-plus"></i> Cargar Documento</button>
+	
+	<a href="{{ url_for('module_jya.explore') }}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i> Volver</a>
+
+  <!-- Modal para cargar enlace -->
+	<div class="modal fade" id="addEnlaceModal" tabindex="-1" role="dialog" aria-labelledby="enlaceAddModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="enlaceAddModalLabel">Agregar Enlace</h5>
+					<button type="button" class="close close-button-mod" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form method="POST" id="linkForm" action="{{ url_for('module_jya.upload_link', id=legajo_id) }}">
+						<div class="form-group mb-3">
+							<label for="titleInput">Ingresar Titulo:</label>
+							<input type="text" class="form-control" id="titleInput" name="title" required>
+						</div>
+						<div class="form-group mb-3">
+							<label for="linkInput">Enlace:</label>
+							<input type="url" class="form-control" id="linkInput" name="enlace" placeholder="Introduce el enlace" required>
+						</div>
+						<div class="form-group mb-3">
+							<label for="typeDocSelect">Tipo de Documento:</label>
+							<select class="form-control" id="typeDocSelect" name="type_doc" required>
+								<option value="">- Seleccionar Tipo de Documento -</option>
+								{% for tipo in type_doc %}
+								<option value="{{ tipo.id }}">
+									{{ tipo.name }}
+								</option>
+								{% endfor %}
+							</select>
+						</div>
+						<div class="form-group">
+							<button type="submit" class="btn btn-success" id="submitButton">Cargar enlace</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal para cargar documento -->
+	<div class="modal fade" id="addDocumentoModal" tabindex="-1" role="dialog" aria-labelledby="documentoAddModalLabel"
+			aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="documentoAddModalLabel">Agregar Documento</h5>
+					<button type="button" class="close close-button-mod" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form method="POST" action="{{ url_for('module_jya.upload_document', id=legajo_id) }}"
+							enctype="multipart/form-data">
+						<div class="form-group mb-3">
+							<label for="titleInput">Ingresar Titulo:</label>
+							<input type="text" class="form-control" id="titleInput" name="title" required>
+						</div>
+						<div class="form-group mb-3">
+							<label for="documentInput">Seleccionar Documento:</label>
+							<input type="file" class="form-control" id="documentInput" name="documento" required>
+						</div>
+						<div class="form-group mb-3">
+							<label for="typeDocSelect">Tipo de Documento:</label>
+							<select class="form-control" id="typeDocSelect" name="type_doc" required>
+								<option value="">- Seleccionar Tipo de Documento -</option>
+								{% for tipo in type_doc %}
+								<option value="{{ tipo.id }}">{{ tipo.name }}</option>
+								{% endfor %}
+							</select>
+						</div>
+						<button type="submit" class="btn btn-success">Cargar Documento</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	function confirmDelete(document_id) {
+		var comfirmation = confirm("¿Está seguro que desea eliminar este documento?");
+		if (comfirmation) {
+			// me traigo el formulario
+			var form = document.getElementById('delete_document_' + document_id);
+			form.submit();
+		}
+	}
+</script>
+
+<!-- Scripts de Bootstrap -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+
+{% endblock content %}

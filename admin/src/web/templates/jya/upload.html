@@ -1,0 +1,329 @@
+{% extends "home.html" %}
+{% import "form_macros.html" as form_macros %}
+{% block title %}
+Cargar legajo
+{% endblock title %}
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='style-modules.css') }}" />
+{% endblock head %}
+{% block content %}
+<div id="main-div">
+  <div class="row justify-content-center">
+    <div id="secondary-div-title" class="col my-4 pt-4 pb-4 border bg-body-tertiary text-center">
+      <h1 class="display-4 text-muted text-center">Informacion de Legajo JyA</h1>
+      <p>Aquí podrá ver toda la información relacionada a un nuevo Legajo.</p>
+    </div>
+  </div>
+  <div id="secondary-div-actions" class="row actions-div justify-content-center">
+    <!-- Pestañas de Bootstrap -->
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <a class="nav-link active {% if form.first_name.errors or form.last_name.errors or form.dni.errors or form.phone.errors or form.age.errors or form.birth_date.errors or form.birth_locality.errors or form.birth_province.errors or form.adress_street.errors or form.adress_number.errors or form.adress_apartment.errors or form.adress_locality.errors or form.adress_province.errors or form.emergency_contact_name.errors or form.emergency_contact_phone.errors or form.disability_certificate.errors or form.disability_certificate_diagnosis.errors or form.other_diagnosis_disability.errors or form.disability_type.errors %}text-danger{% endif %} active"
+          id="datos-generales-tab" data-bs-toggle="tab" href="#datos-generales" role="tab"
+          aria-controls="datos-generales" aria-selected="true">Datos Generales</a>
+      </li>
+      <li class="nav-item" role="presentation">
+        <a class="nav-link {% if form.scholarship.errors or form.per_scholarship.errors or form.scholarship_notes.errors or form.welfare.errors or form.welfare_type.errors or form.pension_beneficiary.errors or form.pension_type.errors or form.social_security.errors or form.affiliate_number.errors or form.has_guardianship.errors or form.previsional_situacion_notes.errors or form.institution_name.errors or form.school_address.errors or form.school_phone.errors or form.current_grade.errors or form.school_notes.errors or form.attending_professionals.errors %}text-danger{% endif %}"
+          id="info-adicional-tab" data-bs-toggle="tab" href="#info-adicional" role="tab" aria-controls="info-adicional"
+          aria-selected="false">Información Adicional</a>
+      </li>
+      <li class="nav-item" role="presentation">
+        <a class="nav-link {% if form.relationship1.errors or form.first_name1.errors or form.last_name1.errors or form.dni1.errors or form.current_address1.errors or form.mobile_phone1.errors or form.email1.errors or form.education_level1.errors or form.occupation1.errors or form.relationship2.errors or form.first_name2.errors or form.last_name2.errors or form.dni2.errors or form.current_address2.errors or form.mobile_phone2.errors or form.email2.errors or form.education_level2.errors or form.occupation2.errors %}text-danger{% endif %}"
+          id="tutores-tab" data-bs-toggle="tab" href="#tutores" role="tab" aria-controls="tutores"
+          aria-selected="false">Tutores</a>
+      </li>
+      <li class="nav-item" role="presentation">
+        <a class="nav-link{% if form.work_proposal.errors or form.condition.errors or form.location.errors or form.days.errors %}text-danger{% endif %}"
+          id="trabajo-tab" data-bs-toggle="tab" href="#trabajo" role="tab" aria-controls="trabajo"
+          aria-selected="false">Trabajo en nuestra Institución</a>
+      </li>
+    </ul>
+    <!-- Contenido de las Pestañas -->
+    <form method="POST" action="">
+      {{ form.hidden_tag() }}
+      <div class="tab-content" id="myTabContent">
+        <!-- Tab: Datos Generales -->
+
+        <div class="tab-pane fade show active" id="datos-generales" role="tabpanel"
+          aria-labelledby="datos-generales-tab">
+
+          {{ form_macros.render_field(form.first_name, is_required=True) }}
+          {{ form_macros.render_field(form.last_name, is_required=True) }}
+          {{ form_macros.render_field(form.dni, is_required=True) }}
+          {{ form_macros.render_field(form.phone, is_required=True) }}
+          {{ form_macros.render_field(form.age, is_required=True) }}
+          {{ form_macros.render_field(form.birth_date, is_required=True) }}
+
+          <h5>Lugar de nacimiento</h5>
+          <div class="row">
+            <div class="col-md-6">
+              {{ form_macros.render_field(form.birth_locality,is_required=True) }}
+            </div>
+            <div class="col-md-6">
+              {{ form_macros.render_field(form.birth_province,is_required=True) }}
+            </div>
+          </div>
+
+          <h5>Domicilio</h5>
+          <div class="row">
+            <div class="col-md-4">
+              {{ form_macros.render_field(form.adress_street,is_required=True) }}
+            </div>
+            <div class="col-md-4">
+              {{ form_macros.render_field(form.adress_number,is_required=True) }}
+            </div>
+            <div class="col-md-4">
+              {{ form_macros.render_field(form.adress_apartment) }}
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              {{ form_macros.render_field(form.adress_locality,is_required=True) }}
+            </div>
+            <div class="col-md-6">
+              {{ form_macros.render_field(form.adress_province,is_required=True) }}
+            </div>
+          </div>
+
+          <p class="h5">Información de Contacto de Emergencia</p>
+          <div class="row">
+            <div class="col-md-6">
+              {{ form_macros.render_field(form.emergency_contact_name,is_required=True) }}
+            </div>
+            <div class="col-md-6">
+              {{ form_macros.render_field(form.emergency_contact_phone,is_required=True) }}
+            </div>
+          </div>
+
+          <h5>¿Posee Certificado de Discapacidad?</h5>
+          {{ form_macros.render_radio_field(form.disability_certificate, is_required=True) }}
+
+          <h6>¿Con qué diagnóstico?</h6>
+
+          {{ form_macros.render_multiselect_checkbox(form.disability_certificate_diagnosis) }}
+
+          <h6>Si es OTRO, indicar cuál. </h6>
+          {{ form_macros.render_field(form.other_diagnosis_disability) }}
+
+          {{ form_macros.render_multiselect_checkbox(form.disability_type) }}
+
+          <button type="button" class="btn btn-primary mt-4" onclick="goToNextTab('datos-generales')">Siguiente</button>
+        </div>
+
+        <div class="tab-pane fade" id="info-adicional" role="tabpanel" aria-labelledby="info-adicional-tab">
+
+          <h5>¿Tiene beca?</h5>
+
+          {{ form_macros.render_radio_field(form.scholarship,is_required=True) }}
+
+          {{ form_macros.render_field(form.per_scholarship) }}
+          {{ form_macros.render_field(form.scholarship_notes) }}
+
+          <h5>¿Percibe alguna Asignación Familiar?</h5>
+
+          {{ form_macros.render_radio_field(form.welfare,is_required=True) }}
+
+          <h6>¿Cual/es?</h6>
+
+          {{ form_macros.render_multiselect_checkbox(form.welfare_type) }}
+
+          <h5>¿Es beneficiario de alguna pensión? </h5>
+
+          {{ form_macros.render_radio_field(form.pension_beneficiary,is_required=True) }}
+
+          <h6>¿Cual?</h6>
+
+          {{ form_macros.render_radio_field(form.pension_type) }}
+
+          <!-- Sitiacion previsional -->
+          <h5>SITUACIÓN PREVISIONAL</h5>
+          {{ form_macros.render_field(form.social_security) }}
+          {{ form_macros.render_field(form.affiliate_number) }}
+
+          {{ form_macros.render_radio_field(form.has_guardianship) }}
+
+          {{ form_macros.render_field(form.previsional_situacion_notes) }}
+
+          <!-- Escuela -->
+          <h5>INSTITUCIÓN ESCOLAR a la que CONCURRE ACTUALMENTE</h5>
+          {{ form_macros.render_field(form.institution_name) }}
+          {{ form_macros.render_field(form.school_address) }}
+          {{ form_macros.render_field(form.school_phone) }}
+          {{ form_macros.render_field(form.current_grade) }}
+          {{ form_macros.render_field(form.school_notes) }}
+
+          {{ form_macros.render_field(form.attending_professionals,is_required=True) }}
+
+          <button type="button" class="btn btn-secondary mt-4"
+            onclick="goToPreviousTab('info-adicional')">Anterior</button>
+          <button type="button" class="btn btn-primary mt-4" onclick="goToNextTab('info-adicional')">Siguiente</button>
+        </div>
+        <div class="tab-pane fade" id="tutores" role="tabpanel" aria-labelledby="tutores-tab">
+          <h4>DATOS PERSONALES De FAMILIAR/es O TUTOR/es RESPONSABLE/s</h4>
+          <h5>Tutor 1</h5>
+
+          {{ form_macros.render_field(form.relationship1,is_required=True) }}
+          {{ form_macros.render_field(form.first_name1,is_required=True) }}
+          {{ form_macros.render_field(form.last_name1,is_required=True) }}
+          {{ form_macros.render_field(form.dni1,is_required=True) }}
+          {{ form_macros.render_field(form.current_address1,is_required=True) }}
+          {{ form_macros.render_field(form.mobile_phone1,is_required=True) }}
+          {{ form_macros.render_field(form.email1) }}
+          {{ form_macros.render_radio_field(form.education_level1) }}
+          {{ form_macros.render_field(form.occupation1) }}
+
+          <h5>Tutor 2</h5>
+
+          {{ form_macros.render_field(form.relationship2) }}
+          {{ form_macros.render_field(form.first_name2) }}
+          {{ form_macros.render_field(form.last_name2) }}
+          {{ form_macros.render_field(form.dni2) }}
+          {{ form_macros.render_field(form.current_address2) }}
+          {{ form_macros.render_field(form.mobile_phone2) }}
+          {{ form_macros.render_field(form.email2) }}
+          {{ form_macros.render_radio_field(form.education_level2) }}
+          {{ form_macros.render_field(form.occupation2) }}
+
+          <button type="button" class="btn btn-secondary mt-4" onclick="goToPreviousTab('tutores')">Anterior</button>
+          <button type="button" class="btn btn-primary mt-4" onclick="goToNextTab('tutores')">Siguiente</button>
+        </div>
+        <div class="tab-pane fade" id="trabajo" role="tabpanel" aria-labelledby="trabajo-tab">
+          <h5>Trabajo en nuestra institución</h5>
+
+          {{ form_macros.render_multiselect_checkbox(form.work_proposal) }}
+          {{ form_macros.render_radio_field(form.condition) }}
+          {{ form_macros.render_radio_field(form.location) }}
+          {{ form_macros.render_multiselect_checkbox(form.days) }}
+
+          {{ form_macros.render_select("Profesor o Psicólogo", "teacher_or_therapist", "teacher_or_therapist",
+          team_members, teacher_or_therapist, "Selecciona un miembro de equipo", disabled_empty=False) }}
+
+          {{ form_macros.render_select("Conductor/a del Caballo", "horse_handler", "horse_handler",
+          team_members, horse_handler, "Selecciona un miembro de equipo", disabled_empty=False) }}
+
+          {{ form_macros.render_select_equestrian("Caballo", "equestrian", "equestrian", equestrians,
+          current_equestrian,
+          "Selecciona un caballo", disabled_empty=False) }}
+
+          {{ form_macros.render_select("Auxiliar de Pista", "track_assistant", "track_assistant",
+          team_members, track_assistant, "Selecciona un miembro de equipo", disabled_empty=False) }}
+          <button type="button" class="btn btn-secondary mt-4" onclick="goToPreviousTab('trabajo')">Anterior</button>
+
+          <div class="form-group mt-4">
+            <button class="btn btn-primary" id="submit_button" onclick="validateAndSubmit(event)">Enviar</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+  // Cambiar a la siguiente pestaña
+  function goToNextTab(currentTabId) {
+    let currentTab = document.getElementById(`${currentTabId}-tab`);
+    let nextTab = currentTab.closest('li').nextElementSibling.querySelector('a[data-bs-toggle="tab"]');
+    let allFilled = true
+    let firstInvalidInput = null;
+
+    const inputs = document.querySelectorAll(`#${currentTabId} input[type="text"], 
+                                               #${currentTabId} input[type="radio"], 
+                                               #${currentTabId} input[type="date"], 
+                                               #${currentTabId} input[type="number"]`);
+
+    inputs.forEach(input => {
+      if (input.required) {
+        if ((input.type === "text" || input.type === "number") && !input.value) {
+          allFilled = false;
+          if (!firstInvalidInput) {
+            firstInvalidInput = input;
+          }
+        }
+        if (input.type === "date" && !input.value) {
+          allFilled = false;
+          if (!firstInvalidInput) {
+            firstInvalidInput = input;
+          }
+        }
+        if (input.type === "radio") {
+          const groupName = input.name;
+          const groupRadios = document.querySelectorAll(`input[name="${groupName}"]`);
+          const anyChecked = Array.from(groupRadios).some(radio => radio.checked);
+
+          if (input.required && !anyChecked) {
+            allFilled = false;
+            if (!firstInvalidInput) {
+              firstInvalidInput = groupRadios[0];
+            }
+          }
+        }
+      }
+    });
+
+    if (allFilled) {
+      let nextTabInstance = new bootstrap.Tab(nextTab);
+      nextTabInstance.show();
+      window.scrollTo(0, 0);
+    } else {
+      if (firstInvalidInput) {
+        firstInvalidInput.focus();
+      }
+    }
+  }
+  // Cambiar a la pestaña anterior
+  function goToPreviousTab(currentTabId) {
+    let currentTab = document.getElementById(`${currentTabId}-tab`);
+    let prevTab = currentTab.closest('li').previousElementSibling.querySelector('a[data-bs-toggle="tab"]');
+    if (prevTab) {
+      let prevTabInstance = new bootstrap.Tab(prevTab);
+      prevTabInstance.show();
+      window.scrollTo(0, 0);
+    }
+  }
+
+  function validateAndSubmit(event) {
+    event.preventDefault();
+    const tabs = document.querySelectorAll('.tab-pane');
+    let allFilled = true;
+    let firstInvalidInput = null;
+    let firstInvalidTab = null;
+
+    tabs.forEach(tab => {
+      const inputs = tab.querySelectorAll('input[type="text"], input[type="radio"], input[type="date"], input[type="number"]');
+      inputs.forEach(input => {
+        if (input.required && !input.value) {
+          allFilled = false;
+          if (!firstInvalidInput) {
+            firstInvalidInput = input;
+            firstInvalidTab = tab; // Guarda la pestaña que contiene el campo vacío.
+          }
+        }
+
+        if (input.type === "radio") {
+          const groupName = input.name;
+          const groupRadios = tab.querySelectorAll(`input[name="${groupName}"]`);
+          const anyChecked = Array.from(groupRadios).some(radio => radio.checked);
+          if (input.required && !anyChecked) {
+            allFilled = false;
+            if (!firstInvalidInput) {
+              firstInvalidInput = groupRadios[0];
+              firstInvalidTab = tab; // Guarda la pestaña que contiene el grupo de radios vacíos.
+            }
+          }
+        }
+      });
+    });
+
+    if (allFilled) {
+      document.querySelector('form').submit();
+    } else {
+      const firstTabId = firstInvalidTab.id;
+      const firstTab = document.getElementById(`${firstTabId}-tab`);
+      let firstTabInstance = new bootstrap.Tab(firstTab);
+      firstTabInstance.show();
+      window.scrollTo(0, 0);
+    }
+  }
+</script>
+{% endblock content %}

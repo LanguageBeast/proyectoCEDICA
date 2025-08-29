@@ -1,0 +1,238 @@
+{% extends "home.html" %}
+{% block title %}
+  Explorar consultas
+{% endblock title %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='style-modules.css') }}" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
+{% endblock head %}
+{% block content %}
+  <div id="main-div">
+    <div class="row justify-content-center">
+      <div id="secondary-div-title" class="col my-4 pt-4 pb-4 border bg-body-tertiary text-center">
+        <h1 class="display-4 text-muted text-center">Explorar Consultas</h1>
+        <p>Aquí podrá leer, editar y eliminar Consultas.</p>
+      </div>
+    </div>
+    <div class="row">
+      <form method="post">
+        <div class="col-md-12">
+          <div class="grid search">
+            <div class="grid-body">
+              <div class="row">
+                <div class="col-md-3">
+                  <h2 class="grid-title">
+                    <i class="fa fa-filter"></i> Filtros
+                  </h2>
+                  <hr />
+                  <h5>Buscar por</h5>
+                  <div class="checkbox">
+                    <label class="lead display-7">
+                      <input type="checkbox" name="name_filter" checked disabled />
+                      Nombre completo
+                    </label>
+                  </div>
+                  <div class="form-group">
+                    <label class="lead display-7">Estado</label>
+                    <div class="checkbox">
+                      <label>
+                        <input type="checkbox" name="status_pending" value="Pendiente" />
+                        Pendiente
+                      </label>
+                    </div>
+                    <div class="checkbox">
+                      <label>
+                        <input type="checkbox" name="status_in_progress" value="En progreso" />
+                        En progreso
+                      </label>
+                    </div>
+                    <div class="checkbox">
+                      <label>
+                        <input type="checkbox" name="status_discarded" value="Descartado" />
+                        Descartado
+                      </label>
+                    </div>
+                    <div class="checkbox">
+                      <label>
+                        <input type="checkbox" name="status_solved" value="Resuelto" />
+                        Resuelto
+                      </label>
+                    </div>
+                  </div>
+                  <div class="padding"></div>
+                </div>
+                <div class="col-md-9">
+                  <h2>
+                    <i class="fa fa-file-o"></i> Resultados
+                  </h2>
+                  <hr />
+                  <div class="input-group">
+                    <input type="text" class="form-control" name="search_string" />
+                    <span class="input-group-btn">
+                      <button class="btn btn-primary" type="submit">
+                        <i class="fa fa-search"></i>
+                      </button>
+                    </span>
+                  </div>
+                  <div class="d-flex p-2 bd-highlight justify-content-evenly row">
+                    <div class="dropdown mb-3 d-flex flex-column text-center" style="width: 320px;">
+                      <button class="btn btn-secondary dropdown-toggle"
+                              type="button"
+                              id="orderDirectionDropdown"
+                              data-bs-toggle="dropdown"
+                              aria-expanded="false">Ordenar dirección</button>
+                      <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="orderDirectionDropdown">
+                        <li>
+                          <a class="dropdown-item" href="{{ url_for('module_consultation.explore', orderDirection='asc') }}">Ascendente</a>
+                        </li>
+                        <li>
+                          <a class="dropdown-item" href="{{ url_for('module_consultation.explore', orderDirection='desc') }}">Descendente</a>
+                        </li>
+                      </ul>
+                      {% if filtersConsultations and filtersConsultations.orderDirection %}
+                        <p class="lead">
+                          Actualmente ordenado por: <span class="font-weight-bold">
+                          {{ 'Ascendente' if filtersConsultations.orderDirection == 'asc' else 'Descendente' }}
+                        </span>
+                      </p>
+                    {% else %}
+                      <p class="lead">Ningún orden</p>
+                    {% endif %}
+                  </div>
+                  <div class="dropdown mb-3 d-flex flex-column text-center" style="width: 320px;">
+                    <button class="btn btn-secondary dropdown-toggle"
+                            type="button"
+                            id="orderByDropdown"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">Ordenar por</button>
+                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="orderByDropdown">
+                      <li>
+                        <a class="dropdown-item" href="{{ url_for('module_consultation.explore', orderBy='entry_date') }}">Fecha de consulta</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="{{ url_for('module_consultation.explore', orderBy='') }}">Ninguno</a>
+                      </li>
+                    </ul>
+                    {% if filtersConsultations and filtersConsultations.orderBy %}
+                      <p class="lead">
+                        Actualmente ordenado por: <span class="font-weight-bold">
+                        {{ 'Fecha de consulta' if filtersConsultations.orderBy == 'entry_date' }}
+                      </span>
+                    </p>
+                  {% else %}
+                    <p class="lead">Ningún orden</p>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="d-flex p-2 bd-highlight justify-content-evenly row">
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <tbody>
+                      <tr>
+                        <th>Nombre completo</th>
+                        <th>Email</th>
+                        <th>Mensaje</th>
+                        <th>Estado</th>
+                        <th>Fecha de consulta</th>
+                      </tr>
+                      {% if items_on_page %}
+                        {% for consultation in items_on_page %}
+                          <tr>
+                            <td>{{ consultation.full_name }}</td>
+                            <td>{{ consultation.email }}</td>
+                            <td>{{ truncate_message(consultation.message) }}</td>
+                            <td>{{ consultation.status }}</td>
+                            <td>{{ consultation.created_at }}</td>
+                            <td>
+                              <a href="{{ url_for('module_consultation.edit', id=consultation.id) }}" class="btn btn-primary"><i class="fa fa-info"></i></a>
+                              {% if check_permission(session, "consultation_destroy") %}
+                                <input onclick="confirmDelete({{ consultation.id }})"
+                                       class="btn btn-danger"
+                                       type="button"
+                                       name="delete"
+                                       value="Eliminar" />
+                              {% else %}
+                                <input class="btn btn-danger disabled" type="button" name="delete" value="Eliminar" disabled />
+                              {% endif %}
+                            </td>
+                          </tr>
+                        {% endfor %}
+                      {% else %}
+                        <tr>
+                          <td colspan="6" class="text-center">No se han buscado Consultas aún.</td>
+                        </tr>
+                      {% endif %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="d-flex p-2 bd-highlight">
+                <ul class="pagination">
+                  {% if items_on_page %}
+                    {% if page > 1 %}
+                      <li class="active mx-2">
+                        <a href="{{ url_for('module_consultation.explore', page=page-1) }}" class="btn btn-primary">Anterior</a>
+                      </li>
+                    {% endif %}
+                    <span class="lead">Página {{ page }} de {{ total_pages }}</span>
+                    {% if page < total_pages %}
+                      <li class="active mx-2">
+                        <a href="{{ url_for('module_consultation.explore', page=page+1) }}" class="btn btn-primary">Siguiente</a>
+                      </li>
+                    {% endif %}
+                  {% endif %}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    {% for consultation in items_on_page %}
+      <form id="delete_consultation_{{ consultation.id }}"
+            method="post"
+            action="{{ url_for('module_consultation.delete', id=consultation.id) }}">
+        <input type="hidden" name="delete" value="delete" />
+      </form>
+    {% endfor %}
+  </div>
+</div>
+</div>
+<script>
+    function setActive(element, dropdownId) {
+        var items = element.parentElement.parentElement.querySelectorAll('.dropdown-item');
+        items.forEach(function(item) {
+            item.classList.remove('active');
+        });
+        element.classList.add('active');
+
+        var dropdownButton = document.getElementById(dropdownId);
+        var label = element.nextElementSibling;
+        dropdownButton.textContent = label.textContent;
+    }
+
+    function confirmDelete(consultationId) {
+        var comfirmation = confirm("¿Está seguro que desea eliminar esta consulta?");
+        if (comfirmation) {
+            var form = document.getElementById('delete_consultation_' + consultationId);
+            form.submit();
+        }
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkboxes = document.querySelectorAll('input[name^="status_"]');
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    checkboxes.forEach(cb => {
+                        if (cb !== this) {
+                            cb.checked = false;
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock content %}

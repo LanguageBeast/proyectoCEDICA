@@ -1,0 +1,57 @@
+{% extends "home.html" %}
+{% block title %}
+  Perfil de Usuario
+{% endblock title %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='style-modules.css') }}" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
+{% endblock head %}
+{% block content %}
+  <div id="main-div">
+    <div class="row justify-content-center">
+      <div id="secondary-div-title" class="col my-4 pt-4 pb-4 border bg-body-tertiary text-center">
+        <h1 class="display-4 text-muted text-center">Perfil de Usuario</h1>
+      </div>
+    </div>
+    <div id="secondary-div-actions" class="row actions-div justify-content-center">
+      <form method="" action="" disabled>
+        <fieldset class="form-group">
+          <div class="form-group mb-3">
+            <label class="form-control-label">Email</label>
+            <p class="form-control">{{ user.email }}</p>
+          </div>
+          <div class="form-group mb-3">
+            <label class="form-control-label">DNI</label>
+            <p class="form-control">{{ user.dni }}</p>
+          </div>
+          <div class="form-group mb-3">
+            <label class="form-control-label">Alias</label>
+            <p class="form-control">{{ user.alias }}</p>
+          </div>
+          <div class="form-group mb-3">
+            <label class="form-control-label">Password</label>
+            <input type="password" name="" id="" class="form-control" value="{{ user.password }}" disabled>
+          </div>
+          <div class="form-group mb-3">
+            <label class="form-control-label">Activo</label>
+            <p class="form-control">{{ "Si" if user.is_enabled else "No" }}</p>
+          </div>
+          <div class="form-group mb-3">
+            <label class="form-control-label">Rol</label>
+            <p class="form-control">{{ user.role.name }}</p>
+          </div>
+        </fieldset>
+        {% if check_permission(session, "users_update") %}
+          <div class="form-group">
+            <a href="{{ url_for('module_users.edit', id=user.id) }}" class="btn btn-primary">Editar Perfil</a>
+          </div>
+        {% else %}
+          <div class="form-group">
+            <a href="{{ url_for('module_users.explore') }}" class="btn btn-secondary">Cancelar</a>
+          </div>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+{% endblock content %}

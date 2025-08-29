@@ -1,0 +1,184 @@
+{% extends "home.html" %}
+{% block title %}
+Explorar Contenidos
+{% endblock title %}
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='style-modules.css') }}" />
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
+{% endblock head %}
+{% block content %}
+<div id="main-div">
+  <div class="row justify-content-center">
+    <div id="secondary-div-title" class="col my-4 pt-4 pb-4 border bg-body-tertiary text-center">
+      <h1 class="display-4 text-muted text-center">Explorar Contenidos</h1>
+      <p>Aquí podrá leer, editar y eliminar Contenidos.</p>
+    </div>
+  </div>
+  <div class="row">
+    <!-- BEGIN SEARCH RESULT -->
+    <form method="get">
+      <input type="hidden" name="reset" value="0">
+      <input type="hidden" name="orderDirection" value="{{ request.args.get('orderDirection', 'asc') }}">
+      <div class="col-md-12">
+        <div class="grid search">
+          <div class="grid-body">
+            <div class="row">
+              <!-- BEGIN FILTERS -->
+              <div class="col-md-3">
+                <h2 class="grid-title">
+                  <i class="fa fa-filter"></i> Buscar por:
+                </h2>
+                <hr />
+                <!-- BEGIN GENERAL FILTERS -->
+                <div class="input-group mb-3">
+                  <h5>Buscar</h5>
+                  <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">
+                      <i class="fa fa-search"></i>
+                    </button>
+                  </span>
+                </div>
+                <label class="lead display-7">
+                  Título
+                  <input type="text" class="form-control" name="title" value="{{ filters.get('title', '') }}" />
+                </label>
+                <label class="lead display-7">
+                  Apellido de Autor
+                  <input type="text" class="form-control" name="author_surname"
+                    value="{{ filters.get('author_surname', '') }}" />
+                </label>
+                <!-- END GENERAL FILTERS -->
+                <div class="padding"></div>
+              </div>
+              <!-- END FILTERS -->
+              <!-- BEGIN RESULT -->
+              <div class="col-md-9">
+                <h2>
+                  <i class="fa fa-file-o"></i> Resultados
+                </h2>
+                <hr />
+                <!-- DROPDOWNS --->
+                <div class="d-flex justify-content-evenly mb-3">
+                  <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="orderDirectionDropdown"
+                      data-bs-toggle="dropdown" aria-expanded="false">
+                      <span>Ordenar dirección</span>
+                      <div>
+                        <small class="text-white">
+                          {% if request.args.get('orderDirection') == 'desc' %}
+                          Descendente
+                          {% else %}
+                          Ascendente
+                          {% endif %}
+                        </small>
+                      </div>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="orderDirectionDropdown">
+                      <li>
+                        <a class="dropdown-item"
+                          href="{{ url_for('module_content.explore', orderDirection='asc',  **(filters if filters else {})) }}">Ascendente</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item"
+                          href="{{ url_for('module_content.explore', orderDirection='desc',  **(filters if filters else {})) }}">Descendente</a>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="dropdown mb-3">
+                  </div>
+                </div>
+                <!-- END DROPDOWNS -->
+                <!-- END SEARCH INPUT -->
+                <!-- BEGIN TABLE RESULT -->
+                {% set can_destroy = check_permission(session, 'content_destroy') %}
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <tbody>
+                      <tr>
+                        <th>Fecha De Creación</th>
+                        <th>Título</th>
+                        <th>Alias Autor</th>
+                        <th>Estado</th>
+                      </tr>
+                      {% if items_on_page %}
+                      {% for content in items_on_page %}
+                      <tr>
+                        <td>{{ content.created_at.strftime("%d/%m/%Y") }}</td>
+                        <td>{{ content.title }}</td>
+                        <td>{{ content.author.alias}}</td>
+                        <td>{{ content.status }}</td>
+                        <td>
+                          <a href="{{ url_for('module_content.edit', id=content.id) }}" class="btn btn-primary"
+                            title="{% if check_permission(session, 'content_show') and check_permission(session, 'content_update') %}Ver o editar{% else %}Ver{% endif %}">
+                            <i class="fa fa-eye"></i>
+                          </a>
+                        </td>
+                        {% if can_destroy %}
+                        <td>
+                          <input onclick="confirmDelete({{ content.id }})" class="btn btn-danger" type="button"
+                            name="delete" value="Eliminar" />
+                        </td>
+                        {% endif %}
+                      </tr>
+                      {% endfor %}
+                      {% else %}
+                      <tr>
+                        <td colspan="6" class="text-center">No hay Contenidos aún.</td>
+                      </tr>
+                      {% endif %}
+                    </tbody>
+                  </table>
+                </div>
+                <!-- END TABLE RESULT -->
+
+                <div class="d-flex p-2 bd-highlight">
+                  <!-- BEGIN PAGINATION -->
+                  <ul class="pagination">
+                    {% if items_on_page %}
+                    {% if page > 1 %}
+                    <li class="active mx-2">
+                      <a href="{{ url_for('module_receipt.explore', page=page-1,orderDirection=request.args.get('orderDirection')) }}"
+                        class="btn btn-primary">Anterior</a>
+                    </li>
+                    {% endif %}
+                    <span class="lead">Página {{ page }} de {{ total_pages }}</span>
+                    {% if page < total_pages %} <li class="active mx-2">
+                      <a href="{{ url_for('module_receipt.explore', page=page+1,orderDirection=request.args.get('orderDirection')) }}"
+                        class="btn btn-primary">Siguiente</a>
+                      </li>
+                      {% endif %}
+                      {% endif %}
+                  </ul>
+                  <!-- END PAGINATION -->
+                </div>
+                <!-- END RESULT -->
+              </div>
+            </div>
+          </div>
+        </div>
+    </form>
+    <!-- END SEARCH RESULT -->
+    {% block form%}
+    {% for content in items_on_page %}
+    <form id="delete_content_{{ content.id }}" method="POST"
+      action="{{ url_for('module_content.delete', id=content.id) }}">
+      <input type="hidden" name="delete" value="delete" />
+    </form>
+    {% endfor %}
+    {% endblock form%}
+  </div>
+</div>
+</div>
+<script>
+
+  function confirmDelete(content_id) {
+    var comfirmation = confirm("¿Está seguro que desea eliminar este contenido?");
+    if (comfirmation) {
+      var form = document.getElementById('delete_content_' + content_id);
+      form.submit();
+    }
+  }
+
+</script>
+{% endblock content %}

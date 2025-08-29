@@ -1,0 +1,296 @@
+{% extends "home.html" %}
+
+{% block title %}
+  Editar Miembro del Equipo
+{% endblock title %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='style-modules.css') }}" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
+{% endblock head %}
+
+{% block content %}
+  <div id="main-div">
+    <div class="row justify-content-center">
+      <div id="secondary-div-title" class="col my-4 pt-4 pb-4 border bg-body-tertiary text-center">
+        <h1 class="display-4 text-muted text-center">Editar Miembro del Equipo {{ team_member.id }}</h1>
+      </div>
+    </div>
+    <div id="secondary-div-actions" class="row actions-div justify-content-center">
+      <form method="POST" action="" {% if 'team_member_update' not in team_member_permissions %}disabled{% endif %} enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+          <div class="form-group mb-3">
+            {{ form.first_name.label(class="form-control-label") }}
+            {% if form.first_name.errors %}
+              {{ form.first_name(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.first_name.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.first_name(class="form-control") }}
+            {% endif %}
+          </div>
+          
+          <div class="form-group mb-3">
+            {{ form.last_name.label(class="form-control-label") }}
+            {% if form.last_name.errors %}
+              {{ form.last_name(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.last_name.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.last_name(class="form-control") }}
+            {% endif %}
+          </div>
+
+          <div class="form-group mb-3">
+            {{ form.dni.label(class="form-control-label") }}
+            {% if form.dni.errors %}
+              {{ form.dni(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.dni.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.dni(class="form-control") }}
+            {% endif %}
+          </div>
+
+          <div class="form-group mb-3">
+            {{ form.email.label(class="form-control-label") }}
+            {% if form.email.errors %}
+              {{ form.email(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.email.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.email(class="form-control") }}
+            {% endif %}
+          </div>
+
+          <div class="form-group mb-3">
+            {{ form.address.label(class="form-control-label") }}
+            {% if form.address.errors %}
+              {{ form.address(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.address.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.address(class="form-control") }}
+            {% endif %}
+          </div>
+
+          <div class="form-group mb-3">
+            {{ form.location.label(class="form-control-label") }}
+            {% if form.location.errors %}
+              {{ form.location(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.location.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.location(class="form-control") }}
+            {% endif %}
+          </div>
+
+          <div class="form-group mb-3">
+            {{ form.phone.label(class="form-control-label") }}
+            {% if form.phone.errors %}
+              {{ form.phone(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.phone.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.phone(class="form-control") }}
+            {% endif %}
+          </div>
+
+          <div class="form-group mb-3">
+            {{ form.profession.label(class="form-control-label") }}
+            {% if form.profession.errors %}
+              {{ form.profession(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.profession.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.profession(class="form-control") }}
+            {% endif %}
+          </div>
+
+          <div class="form-group mb-3">
+            {{ form.job_position.label(class="form-control-label") }}
+            {% if form.job_position.errors %}
+              {{ form.job_position(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.job_position.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.job_position(class="form-control") }}
+            {% endif %}
+          </div>
+
+          <div class="form-group mb-3">
+            {{ form.start_date.label(class="form-control-label") }}
+            {% if form.start_date.errors %}
+              {{ form.start_date(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.start_date.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.start_date(class="form-control") }}
+            {% endif %}
+          </div>
+
+          <div class="form-group mb-3">
+            {{ form.end_date.label(class="form-control-label") }}
+            {% if form.end_date.errors %}
+              {{ form.end_date(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.end_date.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.end_date(class="form-control") }}
+            {% endif %}
+          </div>
+
+          <div class="form-group mb-3">
+            {{ form.emergency_contact_name.label(class="form-control-label") }}
+            {% if form.emergency_contact_name.errors %}
+              {{ form.emergency_contact_name(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.emergency_contact_name.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.emergency_contact_name(class="form-control") }}
+            {% endif %}
+          </div>
+          <div class="form-group mb-3">
+            {{ form.emergency_contact_phone.label(class="form-control-label") }}
+            {% if form.emergency_contact_phone.errors %}
+              {{ form.emergency_contact_phone(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.emergency_contact_phone.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.emergency_contact_phone(class="form-control") }}
+            {% endif %}
+          </div>
+
+          <div class="form-group mb-3">
+            {{ form.health_insurance.label(class="form-control-label") }}
+            {% if form.health_insurance.errors %}
+              {{ form.health_insurance(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.health_insurance.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.health_insurance(class="form-control") }}
+            {% endif %}
+          </div>
+
+          <div class="form-group mb-3">
+            {{ form.insurance_number.label(class="form-control-label") }}
+            {% if form.insurance_number.errors %}
+              {{ form.insurance_number(class="form-control is-invalid") }}
+              <div class="invalid-feedback">
+                {% for error in form.insurance_number.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.insurance_number(class="form-control") }}
+            {% endif %}
+          </div>
+
+          <div class="form-group mb-3">
+            {{ form.condition.label(class="form-control-label") }}
+            {% if form.condition.errors %}
+              {{ form.condition(class="form-control is-invalid list-unstyled") }}
+              <div class="invalid-feedback">
+                {% for error in form.condition.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.condition(class="form-control list-unstyled") }}
+            {% endif %}
+          </div>
+
+          <div class="form-group mb-3">
+            {{ form.active.label(class="form-control-label") }}
+            {% if form.active.errors %}
+              {{ form.active(class="form-check-input is-invalid", id="active") }}
+              <div class="invalid-feedback">
+                  {% for error in form.active.errors %}<span>{{ error }}</span>{% endfor %}
+              </div>
+            {% else %}
+              {{ form.active(class="form-check-input", id="active") }}
+            {% endif %}
+            <label class="form-check-label" for="active">Sí</label>
+          </div>
+          <div class="form-group mb-3">
+            {{ form.documents.label(class="form-control-label") }}
+            <input type="file" id="documentInput" class="form-control" name="documents" multiple>
+            <div id="fileList" class="mt-2"></div>
+            {% if form.documents.errors %}
+                {{ form.documents(class="form-control is-invalid list-unstyled", multiple=True) }}
+                <div class="invalid-feedback">
+                    {% for error in form.documents.errors %}<span>{{ error }}</span>{% endfor %}
+                </div>
+            {% endif %}
+          </div>
+          {% if get_documents(team_member.id) %}
+            <div class="form-group">
+              <label>Documentos existentes:</label>
+              <ul>
+              {% for document in get_documents(team_member.id) %}
+                <li>
+                  <a href="{{ document_url(document.id ~ '.' ~ document.name) }}" download>{{ document.name }}</a>
+                  <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ document.id }}, {{ team_member.id }})">Eliminar</button>
+                </li>
+              {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+        </fieldset>
+        {% if check_permission(session, "team_member_update") %}
+          <div class="form-group">{{ form.submit(class="btn btn-primary", value="Editar miembro del equipo") }}</div>
+        {% else %}
+          <div class="form-group">
+            {{ form.submit(class="btn btn-primary disabled", value="No posees el permiso necesario") }}
+          </div>
+        {% endif %}
+        <a href="{{ url_for('module_team_member.explore') }}" class="btn btn-secondary">Cancelar</a>
+      </form>
+      {% for document in get_documents(team_member.id) %}
+        <form id="delete_document_{{ document.id }}_{{ team_member.id }}"
+        method="POST"
+        action="{{ url_for('module_team_member.delete_document', document_id=document.id, team_member_id=team_member.id) }}">
+        <input type="hidden" name="delete" value="delete" />
+        </form>
+      {% endfor %}
+    </div>
+  </div>
+  <script>
+    function confirmDelete(document_id, team_member_id) {
+        var confirmation = confirm("¿Está seguro que desea eliminar este documento?");
+        if (confirmation) {
+            // Seleccionar el formulario específico usando el id único
+            var form = document.getElementById('delete_document_' + document_id + '_' + team_member_id);
+            if (form) {
+                form.submit();
+            } else {
+                console.error('Formulario no encontrado para document_id:', document_id, 'y team_member_id:', team_member_id);
+            }
+        }
+    }
+    </script>
+    <script>
+      document.getElementById('documentInput').addEventListener('change', function(event) {
+          const fileListDiv = document.getElementById('fileList');
+          fileListDiv.innerHTML = ''; // Limpiar la lista antes de agregar
+          const files = event.target.files;
+          for (let i = 0; i < files.length; i++) {
+              const fileItem = document.createElement('div');
+              fileItem.textContent = files[i].name;
+              fileListDiv.appendChild(fileItem);
+          }
+      });
+    </script>
+{% endblock content %}

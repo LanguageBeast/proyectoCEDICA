@@ -1,0 +1,53 @@
+{% extends "home.html" %}
+
+{% block title %}
+  Editar documento
+{% endblock title %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='style-modules.css') }}" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
+{% endblock head %}
+
+{% block content %}
+  <div id="main-div">
+    <div class="row justify-content-center">
+      <div id="secondary-div-title" class="col my-4 pt-4 pb-4 border bg-body-tertiary text-center">
+        <h1 class="display-4 text-muted text-center">Editar documento {{ document.name }}</h1>
+      </div>
+    </div>
+    <div id="secondary-div-actions" class="row actions-div justify-content-center">
+      <form method="POST" action="{{ url_for('module_jya.edit_document', id=document.id) }}" enctype="multipart/form-data">
+        <div class="form-group mb-3">
+          <label for="titleInput">Ingresar Titulo:</label>
+          <input type="text" class="form-control" id="titleInput" name="title" required value="{{ document.name }}">
+        </div>
+        {% if document.link %}
+          <div class="form-group mb-3">
+            <label for="linkInput">Enlace:</label>
+            <input type="url" class="form-control" id="linkInput" name="enlace" required value="{{ document.link }}">
+          </div>
+        {% else %}
+          <div class="form-group mb-3">
+            <label for="documentInput">Seleccionar Documento (si selecciona uno nuevo, reemplazará al <a href="{{ document_url(document.id ~ '.' ~ document.path) }}">documento actual</a>):</label>
+            <input type="file" class="form-control" id="documentInput" name="documento">
+          </div>
+        {% endif %}
+        <div class="form-group mb-3">
+          <label for="typeDocSelect">Tipo de Documento:</label>
+          <select class="form-control" id="typeDocSelect" name="type_doc" required>
+            <option value="">- Seleccionar Tipo de Documento -</option>
+            {% for tipo in type_doc %}
+            <option value="{{ tipo.id }}" {% if document.typedoc_fileJyA_id == tipo.id %}selected{% endif %}>{{ tipo.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Editar Documento</button>
+      </form>
+      <div class="form-group mb-3">
+        <a href="{{ url_for('module_jya.documentos', id=document.fileJyA_id) }}" class="btn btn-secondary"><i class="fa fa-arrow-left"></i> Volver</a>
+      </div>
+    </div>
+  </div>
+{% endblock content %}

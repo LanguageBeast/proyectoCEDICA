@@ -1,0 +1,65 @@
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.footer {
+  background: linear-gradient(
+    30deg,
+    rgb(67, 180, 245),
+    rgb(246, 193, 17),
+    rgb(67, 180, 245)
+  );
+  color: rgb(0, 0, 0);
+  border-top: 1px solid #757575;
+  font-size: 0.9rem;
+  margin-top: auto;
+}
+
+.content {
+  flex: 1;
+}
+
+header {
+  background: linear-gradient(
+    30deg,
+    rgb(67, 180, 245),
+    rgb(246, 193, 17),
+    rgb(67, 180, 245)
+  );
+  padding: 10px 0;
+  border-bottom: 1px solid #757575;
+}
+
+.container {
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  margin-top: 5rem;
+  margin-bottom: 5rem;
+}
+
+.min-vh-100 {
+  min-height: 100vh;
+}
+
+.title {
+  font-size: 2.5rem; /* Tamaño grande para destacar */
+  font-weight: bold; /* Hacer el título en negrita */
+  color: #333333; /* Color personalizado */
+}
+
+.text {
+  font-size: 1.1rem; /* Ajuste del tamaño de la fuente */
+  line-height: 1.6; /* Mejorar el espaciado entre líneas para legibilidad */
+  color: #666666; /* Un color gris suave */
+}
+
+
+@media only screen and (max-width: 991px) {
+  ul.dropdown-menu.show {
+    right: auto;
+    left: 0;
+  }
+}

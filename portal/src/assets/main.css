@@ -1,0 +1,14 @@
+/* assets/main.css */
+.home-text {
+  font-size: 1.5rem;
+  line-height: 1.6;
+}
+
+.home-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* Estilos adicionales de Bootstrap si se desean modificar */

@@ -1,0 +1,180 @@
+{% extends "home.html" %}
+{% block title %}
+Reportes
+{% endblock title %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='style-modules.css') }}" />
+{% endblock head %}
+
+{% block content %}
+<div id="main-div">
+  <div class="row justify-content-between">
+    <div id="secondary-div-title" class="h1-div col pt-4 pb-4 border bg-body-tertiary text-center">
+      <h1 class="display-2 text-muted text-center">Modulo Reportes</h1>
+      <p>Aquí podrá observar diferentes reportes y gráficos de interés.</p>
+      <p>
+        Actualmente, ha ingresado como: <b>{{ get_role(session).name }}</b>
+      </p>
+    </div>
+  </div>
+  <div class="row justify-content-center pt-4">
+    <div class="col-12 text-center">
+      <h4>Reporte de gastos</h4>
+    </div>
+
+    <form method="get">
+      <div class="col-12 d-flex flex-wrap justify-content-center align-items-center gap-3">
+        <div class="d-flex flex-wrap justify-content-center align-items-center gap-3">
+          <div class="form-group">
+            <label class="lead display-7">Desde la fecha:</label>
+            <input type="date" class="form-control" name="start_date" value="{{ start_date }}" />
+            {% if errors.from_date %}
+            <small class="form-text text-danger">{{ errors.from_date }}</small>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            <label class="lead display-7">Hasta la fecha:</label>
+            <input type="date" class="form-control" name="end_date" value="{{ end_date }}" />
+            {% if errors.to_date %}
+            <small class="form-text text-danger">{{ errors.to_date }}</small>
+            {% endif %}
+          </div>
+        </div>
+        <button class="btn btn-primary" type="submit">Buscar</button>
+      </div>
+    </form>
+
+    <div class="col-12 text-center pt-3">
+      <p class="fw-bold fs-5 text-wrap">Monto gastado: ${{ amount }}</p>
+    </div>
+
+    <div class="row justify-content-center pt-4">
+      <div class="col-12 text-center">
+        <h4>Reporte de legajos JyA con deudas</h4>
+      </div>
+    </div>
+    <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
+      <div class="row justify-content-center">
+        <div class="col-12 col-md-6">
+          <table class="table table-hover text-center" style="width: 100%; table-layout: fixed;">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Apellido</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if filesJyA_in_debt != [] %}
+              {% for legajo in filesJyA_in_debt %}
+              <tr>
+                <td>{{ legajo.first_name }}</td>
+                <td>{{ legajo.last_name }}</td>
+              </tr>
+              {% endfor %}
+              {% else %}
+              <tr>
+                <td colspan="2" class="text-center">No hay legajos JyA con deudas.</td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+
+
+    <div class="row justify-content-center pt-4">
+      <div class="col-12 text-center">
+        <h4>Reporte de personal rentado activo</h4>
+      </div>
+    </div>
+    <div class="table-responsive" style="max-height: 400px; overflow-y: auto; overflow-x: auto;">
+      <div class="row justify-content-center">
+        <div class="col-12 col-md-8">
+          <table class="table table-hover text-center" style="width: 100%; table-layout: fixed;">
+            <thead>
+              <tr>
+                <th style="border-right: 1px solid #dee2e6; word-wrap: break-word; white-space: normal;">Nombre</th>
+                <th style="border-right: 1px solid #dee2e6; word-wrap: break-word; white-space: normal;">Apellido</th>
+                <th style="border-right: 1px solid #dee2e6; word-wrap: break-word; white-space: normal;">Puesto Laboral
+                </th>
+                <th style="word-wrap: break-word; white-space: normal;">Sede</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if personal != [] %}
+              {% for team_member in personal %}
+              <tr>
+                <td style="border-right: 1px solid #dee2e6; word-wrap: break-word; white-space: normal;">{{
+                  team_member.first_name }}</td>
+                <td style="border-right: 1px solid #dee2e6; word-wrap: break-word; white-space: normal;">{{
+                  team_member.last_name }}</td>
+                <td style="border-right: 1px solid #dee2e6; word-wrap: break-word; white-space: normal;">{{
+                  team_member.job_position }}</td>
+                <td style="word-wrap: break-word; white-space: normal;">{{ team_member.location }}</td>
+              </tr>
+              {% endfor %}
+              {% else %}
+              <tr>
+                <td colspan="4" class="text-center">No hay personal rentado activo.</td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <style>
+      @media (max-width: 400px) {
+
+        .table th,
+        .table td {
+          padding: 0.25rem;
+          /* Ajusta el espaciado */
+          font-size: 0.85rem;
+          /* Reduce el tamaño de la fuente */
+        }
+      }
+    </style>
+
+
+    <div class="row justify-content-center pt-4">
+      <div class="col-12 text-center">
+        <h4>Cantidad de J&A Becados</h4>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <img class="img-fluid" src="data:image/png;base64,{{ scholarship_chart_url }}" alt="Gráfico de Becados" />
+        </div>
+      </div>
+    </div>
+    <div class="row justify-content-center pt-4">
+      <div class="col-12 text-center">
+        <h4>Ingresos Totales por Año</h4>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <img class="img-fluid" src="data:image/png;base64,{{ income_bar_chart_url }}"
+            alt="Gráfico de Ingresos por Año" />
+        </div>
+      </div>
+    </div>
+    <div class="row justify-content-center pt-4">
+      <div class="col-12 text-center">
+        <h4>Número de Consultas Recibidas por Mes</h4>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-md-6 chart-container">
+          <img class="img-fluid" src="data:image/png;base64,{{ consultations_line_chart_url }}"
+            alt="Gráfico de Consultas por Mes" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

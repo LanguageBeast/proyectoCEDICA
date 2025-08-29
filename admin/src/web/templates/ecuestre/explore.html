@@ -1,0 +1,217 @@
+{% extends "home.html" %}
+{% block title %}
+  Explorar ecuestres
+{% endblock title %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='style-modules.css') }}" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
+{% endblock head %}
+{% block content %}
+  <div id="main-div">
+    <div class="row justify-content-center">
+      <div id="secondary-div-title" class="col my-4 pt-4 pb-4 border bg-body-tertiary text-center">
+        <h1 class="display-4 text-muted text-center">Explorar Ecuestres</h1>
+        <p>Aquí podrá leer, editar y eliminar Ecuestres.</p>
+      </div>
+    </div>
+    <div class="row">
+      <form method="post">
+        <div class="col-md-12">
+          <div class="grid search">
+            <div class="grid-body">
+              <div class="row">
+                <div class="col-md-3">
+                  <h2 class="grid-title">
+                    <i class="fa fa-filter"></i> Filtros
+                  </h2>
+                  <hr />
+                  <h5>Buscar por</h5>
+                  <div class="checkbox">
+                    <label class="lead display-7">
+                      <input type="checkbox" name="name_filter" />
+                      Nombre
+                    </label>
+                  </div>
+                  <div class="form-group">
+                    <label for="jya_type" class="lead display-7">
+                      <div class="checkbox">
+                        <label class="lead display-7">
+                          <input type="checkbox" name="jya_filter" />
+                          Tipo de J&A Asignados
+                        </label>
+                      </div>
+                    </label>
+                    <select class="form-control" id="jya_type" name="jya_type" multiple disabled>
+                      <option value="hipoterapia">Hipoterapia</option>
+                      <option value="monta_terapeutica">Monta Terapéutica</option>
+                      <option value="deporte_ecuestre_adaptado">Deporte Ecuestre Adaptado</option>
+                      <option value="actividades_recreativas">Actividades Recreativas</option>
+                      <option value="equitacion">Equitación</option>
+                    </select>
+                  </div>
+                  <div class="padding"></div>
+                </div>
+                <div class="col-md-9">
+                  <h2>
+                    <i class="fa fa-file-o"></i> Resultados
+                  </h2>
+                  <hr />
+                  <div class="input-group">
+                    <input type="text" class="form-control" name="search_string" />
+                    <span class="input-group-btn">
+                      <button class="btn btn-primary" type="submit">
+                        <i class="fa fa-search"></i>
+                      </button>
+                    </span>
+                  </div>
+                  <div class="d-flex p-2 bd-highlight justify-content-evenly row">
+                    <div class="dropdown mb-3 d-flex flex-column text-center" style="width: 320px;">
+                      <button class="btn btn-secondary dropdown-toggle"
+                              type="button"
+                              id="orderDirectionDropdown"
+                              data-bs-toggle="dropdown"
+                              aria-expanded="false">Ordenar dirección</button>
+                      <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="orderDirectionDropdown">
+                        <li>
+                          <a class="dropdown-item" href="{{ url_for('module_ecuestre.explore', orderDirection='asc') }}">Ascendente</a>
+                        </li>
+                        <li>
+                          <a class="dropdown-item" href="{{ url_for('module_ecuestre.explore', orderDirection='desc') }}">Descendente</a>
+                        </li>
+                      </ul>
+                      {% if filtersEquestrian and filtersEquestrian.orderDirection %}
+                        <p class="lead">
+                          Actualmente ordenado por: <span class="font-weight-bold">
+                          {{ 'Ascendente' if filtersEquestrian.orderDirection == 'asc' else 'Descendente' }}
+                        </span>
+                      </p>
+                    {% else %}
+                      <p class="lead">Ningún orden</p>
+                    {% endif %}
+                  </div>
+                  <div class="dropdown mb-3 d-flex flex-column text-center" style="width: 320px;">
+                    <button class="btn btn-secondary dropdown-toggle"
+                            type="button"
+                            id="orderByDropdown"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">Ordenar por</button>
+                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="orderByDropdown">
+                      <li>
+                        <a class="dropdown-item" href="{{ url_for('module_ecuestre.explore', orderBy='name') }}">Nombre</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="{{ url_for('module_ecuestre.explore', orderBy='entry_date') }}">Fecha de ingreso</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="{{ url_for('module_ecuestre.explore', orderBy='birth_date') }}">Fecha de nacimiento</a>
+                      </li>
+                    </ul>
+                    {% if filtersEquestrian and filtersEquestrian.orderBy %}
+                      <p class="lead">
+                        Actualmente ordenado por: <span class="font-weight-bold">
+                        {{ 'Nombre' if filtersEquestrian.orderBy == 'name' else 'Fecha de ingreso' if filtersEquestrian.orderBy == 'entry_date' else 'Fecha de nacimiento' }}
+                      </span>
+                    </p>
+                  {% else %}
+                    <p class="lead">Ningún orden</p>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="d-flex p-2 bd-highlight justify-content-evenly row">
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <tbody>
+                      <tr>
+                        <th>Nombre</th>
+                        <th>Fecha de nacimiento</th>
+                        <th>Fecha de ingreso</th>
+                        <th>Sexo</th>
+                        <th>Raza</th>
+                        <th>Sede</th>
+                      </tr>
+                      {% if items_on_page %}
+                        {% for equestrian in items_on_page %}
+                          <tr>
+                            <td>{{ equestrian.name }}</td>
+                            <td>{{ equestrian.birth_date }}</td>
+                            <td>{{ equestrian.entry_date }}</td>
+                            <td>{{ equestrian.sex }}</td>
+                            <td>{{ equestrian.breed }}</td>
+                            <td>{{ equestrian.location }}</td>
+                            <td>
+                              <a href="{{ url_for('module_ecuestre.edit', id=equestrian.id) }}" class="btn btn-primary"><i class="fa fa-info"></i></a>
+                              {% if check_permission(session, "equestrian_destroy") %}
+                                <input onclick="confirmDelete({{ equestrian.id }})"
+                                       class="btn btn-danger"
+                                       type="button"
+                                       name="delete"
+                                       value="Eliminar" />
+                              {% else %}
+                                <input class="btn btn-danger disabled" type="button" name="delete" value="Eliminar" disabled />
+                              {% endif %}
+                            </td>
+                          </tr>
+                        {% endfor %}
+                      {% else %}
+                        <tr>
+                          <td colspan="6" class="text-center">No se han buscado Ecuestres aún.</td>
+                        </tr>
+                      {% endif %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="d-flex p-2 bd-highlight">
+                <ul class="pagination">
+                  {% if items_on_page %}
+                    {% if page > 1 %}
+                      <li class="active mx-2">
+                        <a href="{{ url_for('module_ecuestre.explore', page=page-1) }}" class="btn btn-primary">Anterior</a>
+                      </li>
+                    {% endif %}
+                    <span class="lead">Página {{ page }} de {{ total_pages }}</span>
+                    {% if page < total_pages %}
+                      <li class="active mx-2">
+                        <a href="{{ url_for('module_ecuestre.explore', page=page+1) }}" class="btn btn-primary">Siguiente</a>
+                      </li>
+                    {% endif %}
+                  {% endif %}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    {% for equestrian in items_on_page %}
+      <form id="delete_equestrian_{{ equestrian.id }}"
+            method="POST"
+            action="{{ url_for('module_ecuestre.delete', id=equestrian.id) }}">
+        <input type="hidden" name="delete" value="delete" />
+      </form>
+    {% endfor %}
+  </div>
+</div>
+</div>
+<script>
+    function setActive(element, dropdownId) {
+        var items = element.parentElement.parentElement.querySelectorAll('.dropdown-item');
+        items.forEach(function(item) {
+            item.classList.remove('active');
+        });
+        element.classList.add('active');
+        var dropdownButton = document.getElementById(dropdownId);
+        var label = element.nextElementSibling;
+        dropdownButton.textContent = label.textContent;
+    }
+
+    function confirmDelete(equestrian_id) {
+        var comfirmation = confirm("¿Está seguro que desea eliminar este ecuestre?");
+        if (comfirmation) {
+            var form = document.getElementById('delete_equestrian_' + equestrian_id);
+            form.submit();
+        }
+    }
+</script>
+{% endblock content %}

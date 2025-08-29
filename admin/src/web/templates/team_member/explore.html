@@ -1,0 +1,256 @@
+{% extends "home.html" %}
+{% block title %}
+  Explorar miembros del equipo
+{% endblock title %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='style-modules.css') }}" />
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
+{% endblock head %}
+{% block content %}
+  <div id="main-div">
+    <div class="row justify-content-center">
+      <div id="secondary-div-title" class="col my-4 pt-4 pb-4 border bg-body-tertiary text-center">
+        <h1 class="display-4 text-muted text-center">Explorar miembros del equipo</h1>
+        <p>Aquí podrá leer, editar y eliminar miembros del equipo.</p>
+      </div>
+    </div>
+    <div class="row">
+      <form method="post" action="{{ url_for('module_team_member.explore') }}">
+        <div class="col-md-12">
+          <div class="grid search">
+            <div class="grid-body">
+              <div class="row">
+                <div class="col-md-3">
+                  <h2 class="grid-title">
+                    <i class="fa fa-filter"></i> Filtros
+                  </h2>
+                  <hr />
+                  <h5>Buscar por</h5>
+                  <div class="radio">
+                    <label class="lead display-7">
+                        <input type="radio" name="filter" value="first_name" class="filter-radio" />
+                        Nombre
+                    </label>
+                  </div>
+                  <div class="radio">
+                    <label class="lead display-7">
+                        <input type="radio" name="filter" value="last_name" class="filter-radio" />
+                        Apellido
+                    </label>
+                  </div>
+                  <div class="radio">
+                    <label class="lead display-7">
+                        <input type="radio" name="filter" value="dni" class="filter-radio" />
+                        Dni
+                    </label>
+                  </div>
+                  <div class="radio">
+                    <label class="lead display-7">
+                        <input type="radio" name="filter" value="email" class="filter-radio" />
+                        Email
+                    </label>
+                  </div>
+                  <div class="radio">
+                    <label class="lead display-7">
+                        <input type="radio" name="filter" class="filter-radio" value="job_position" id="jobPositionFilter" />
+                        Puesto laboral
+                    </label>
+                  </div>
+                  <div class="padding"></div>
+                </div>
+                <div class="col-md-9">
+                  <h2>
+                    <i class="fa fa-file-o"></i> Resultados
+                  </h2>
+                  <hr />
+                  <div class="input-group">
+                    <input type="text" name="search_string" placeholder="Buscar..." class="form-control" id="searchInput" required />
+                    <div class="form-group">
+                        <select class="form-control" id="job_position" name="job_position" style="display: none;" disabled>
+                            <option value="">Selecciona un puesto</option>
+                            <option value="Administrativo/a">Administrativo/a</option>
+                            <option value="Terapeuta">Terapeuta</option>
+                            <option value="Conductor">Conductor</option>
+                            <option value="Auxiliar de pista">Auxiliar de pista</option>
+                            <option value="Herrero">Herrero</option>
+                            <option value="Veterinario">Veterinario</option>
+                            <option value="Entrenador de caballos">Entrenador de caballos</option>
+                            <option value="Domador">Domador</option>
+                            <option value="profesor de equitación">Profesor de equitación</option>
+                            <option value="Docente de capacitación">Docente de capacitación</option>
+                            <option value="Auxiliar de mantenimiento">Auxiliar de mantenimiento</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                    </div>
+                    <span class="input-group-btn">
+                      <button class="btn btn-primary" type="submit">
+                        <i class="fa fa-search"></i>
+                      </button>
+                    </span>
+                  </div>
+                  <div class="d-flex p-2 bd-highlight justify-content-evenly row">
+                    <div class="dropdown mb-3 d-flex flex-column text-center" style="width: 320px;">
+                      <button class="btn btn-secondary dropdown-toggle"
+                              type="button"
+                              id="orderDirectionDropdown"
+                              data-bs-toggle="dropdown"
+                              aria-expanded="false">Ordenar dirección</button>
+                      <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="orderDirectionDropdown">
+                        <li>
+                          <a class="dropdown-item" href="{{ url_for('module_team_member.explore', order_direction='asc', order_by=order_by,filter=filter, search_string=search_string, job_position=job_position) }}">Ascendente</a>
+                        </li>
+                        <li>
+                          <a class="dropdown-item" href="{{ url_for('module_team_member.explore', order_direction='desc', order_by=order_by, filter=filter, search_string=search_string, job_position=job_position) }}">Descendente</a>
+                        </li>
+                      </ul>
+                      {% if order_direction %}
+                        <p class="lead">
+                          Actualmente ordenado por: <span class="font-weight-bold">
+                          {{ 'Ascendente' if order_direction == 'asc' else 'Descendente' }}
+                        </span>
+                        </p>
+                      {% else %}
+                        <p class="lead">Ningún orden</p>
+                      {% endif %}
+                    </div>
+                    <div class="dropdown mb-3 d-flex flex-column text-center" style="width: 320px;">
+                      <button class="btn btn-secondary dropdown-toggle"
+                            type="button"
+                            id="orderByDropdown"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">Ordenar por</button>
+                      <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="orderByDropdown">
+                        <li>
+                          <a class="dropdown-item" href="{{ url_for('module_team_member.explore', order_by='first_name', order_direction=order_direction, filter=filter, search_string=search_string, job_position=job_position) }}">Nombre</a>
+                        </li>
+                        <li>
+                          <a class="dropdown-item" href="{{ url_for('module_team_member.explore', order_by='last_name', order_direction=order_direction, filter=filter, search_string=search_string, job_position=job_position ) }}">Apellido</a>
+                        </li>
+                        <li>
+                          <a class="dropdown-item" href="{{ url_for('module_team_member.explore', order_by='created_at', order_direction=order_direction, filter=filter, search_string=search_string, job_position=job_position ) }}">Fecha de creacion</a>
+                        </li>
+                      </ul>
+                      {% if order_by %}
+                        <p class="lead">
+                          Actualmente ordenado por: <span class="font-weight-bold">
+                        {{ 'Nombre' if order_by == 'first_name' else 'Apellido' if order_by == 'last_name' else 'Fecha de creacion' }}
+                        </span>
+                        </p>
+                      {% else %}
+                        <p class="lead">Ningún orden</p>
+                      {% endif %}
+                    </div>
+                  </div>
+                  <div class="d-flex p-2 bd-highlight justify-content-evenly">
+                    <div class="padding"></div>
+                    <div class="row"></div>
+                    <div class="table-responsive">
+                      <table class="table table-hover">
+                        <tbody>
+                          <tr>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Dni</th>
+                            <th>Email</th>
+                            <th>Puesto laboral</th>
+                            <th>Fecha de creacion</th>
+                            <th>Documento</th>
+                          </tr>
+                          {% if members %}
+                            {% for member in members %}
+                              <tr>
+                                <td>{{ member.first_name }}</td>
+                                <td>{{ member.last_name }}</td>
+                                <td>{{ member.dni }}</td>
+                                <td>{{ member.email }}</td>
+                                <td>{{ member.job_position }}</td>
+                                <td>{{ member.created_at }}</td>
+                                <td>
+                                  {% if get_documents(member.id) %}
+                                    {% for document in get_documents(member.id) %}
+                                      <a href="{{ document_url(document.id ~ '.' ~ document.name) }}" class="btn btn-primary" download>
+                                        {{ document.name }}
+                                      </a><br>
+                                    {% endfor %}
+                                  {% else %}
+                                    <span>Sin documentos</span>
+                                  {% endif %}
+                                </td>
+                                <td>
+                                  <a href="{{ url_for('module_team_member.edit_get', id=member.id) }}" class="btn btn-primary">
+                                    <i class="fa fa-pencil"></i>
+                                  </a>
+                                  <input onclick="confirmDelete({{ member.id }})" class="btn btn-danger" type="button" name="delete" value="Eliminar" />
+                                </td>
+                              </tr>
+                            {% endfor %}
+                          {% else %}
+                            <tr>
+                              <td colspan="6" class="text-center">No hay miembros del equipo aún.</td>
+                            </tr>
+                          {% endif %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div
+                  <div class="d-flex p-2 bd-highlight">
+                    <ul class="pagination">
+                      {% if members %}
+                        {% if page > 1 %}
+                          <li class="active mx-2">
+                            <a href="{{ url_for('module_team_member.explore', page=page-1,order_by=order_by, order_direction=order_direction, filter=filter, search_string=search_string, job_position=job_position) }}" class="btn btn-primary">Anterior</a>
+                          </li>
+                        {% endif %}
+                        <span class="lead">Página {{ page }} de {{ total_pages }}</span>
+                        {% if page < total_pages %}
+                          <li class="active mx-2">
+                            <a href="{{ url_for('module_team_member.explore', page=page+1, order_by=order_by, order_direction=order_direction, filter=filter, search_string=search_string, job_position=job_position) }}" class="btn btn-primary">Siguiente</a>
+                          </li>
+                        {% endif %}
+                      {% endif %}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+      {% for member in members %}
+        <form id="delete_team_member_{{ member.id }}"
+            method="POST"
+            action="{{ url_for('module_team_member.delete', id=member.id) }}">
+          <input type="hidden" name="delete" value="delete" />
+        </form>
+      {% endfor %}
+    </div>
+  </div>
+<script>
+    function setActive(element, dropdownId) {
+        // Remove active class from all dropdown items
+        var items = element.parentElement.parentElement.querySelectorAll('.dropdown-item');
+        items.forEach(function(item) {
+            item.classList.remove('active');
+        });
+
+        // Add active class to the clicked item
+        element.classList.add('active');
+
+        // Update the button text to show the selected value
+        var dropdownButton = document.getElementById(dropdownId);
+        var label = element.nextElementSibling; // Get the corresponding label
+        dropdownButton.textContent = label.textContent; // Set the button text to the label's text
+    }
+
+    function confirmDelete(team_member_id) {
+        var comfirmation = confirm("¿Está seguro que desea eliminar este ecuestre?");
+        if (comfirmation) {
+            // me traigo el formulario
+            var form = document.getElementById('delete_team_member_' + team_member_id);
+            form.submit();
+        }
+    }
+</script>
+<script src="{{ url_for('static', filename='search_filters.js') }}"></script>
+{% endblock content %}
